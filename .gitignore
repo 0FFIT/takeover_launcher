@@ -6,3 +6,5 @@ python-embed/
 *.log
 .DS_Store
 Thumbs.db
+assets/videos/README_VIDEOS.txt
+assets/images/README_IMAGES.txt
