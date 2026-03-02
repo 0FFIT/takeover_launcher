@@ -1,7 +1,9 @@
 {
-  "version": "1.0.0",
+  "version": "1.2.0",
   "discord_url": "https://discord.gg/Wj3xr8z465",
   "github_repo": "0FFIT/takeover_launcher",
   "github_branch": "main",
-  "window_title": "TAKEOVER"
+  "window_title": "TAKEOVER",
+  "launcher_version": "1.2.0",
+  "launcher_exe_url": "https://github.com/0FFIT/takeover_launcher/releases/download/1.2.0/takeover-launcher.exe"
 }
