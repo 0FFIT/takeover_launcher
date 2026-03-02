@@ -1,0 +1,8 @@
+node_modules/
+dist/
+launcher_state.json
+file_hashes.json
+python-embed/
+*.log
+.DS_Store
+Thumbs.db
