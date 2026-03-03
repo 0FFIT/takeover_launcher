@@ -258,6 +258,17 @@ ipcMain.handle('watch-depot-progress', async () => {
   let lastSize = 0;
   let stableChecks = 0;
 
+  // Try to open a file for reading — returns true if locked (Steam still writing)
+  function isFileLocked(filePath) {
+    try {
+      const fd = fs.openSync(filePath, 'r');
+      fs.closeSync(fd);
+      return false;
+    } catch (e) {
+      return e.code === 'EBUSY' || e.code === 'EPERM';
+    }
+  }
+
   depotWatcher = setInterval(() => {
     try {
       const d494 = path.join(base, 'depot_252494');
@@ -291,17 +302,28 @@ ipcMain.handle('watch-depot-progress', async () => {
         lastSize = totalSize;
         stableChecks = 0;
       } else {
-        stableChecks++;
-        // If both depots exist and files haven't changed for 6 checks (12s), likely done
-        if (has494 && has495 && stableChecks >= 6) {
-          send({ status: 'ready', fileCount: files.length, sizeMB, has494, has495 });
-          clearInterval(depotWatcher); depotWatcher = null;
+        // Check if Steam still has any files locked before counting toward stable
+        const sampleFiles = files.filter(f => f.endsWith('.dll') || f.endsWith('.exe')).slice(0, 5);
+        const anyLocked = sampleFiles.some(f => isFileLocked(f));
+        if (anyLocked) {
+          // Steam still writing — show live status, don't count as stable
+          const lockedName = sampleFiles.find(f => isFileLocked(f));
+          send({ status: 'downloading', fileCount: files.length, sizeMB, newest: path.basename(lockedName || ''), has494, has495 });
+          stableChecks = 0;
         } else {
-          send({ status: 'downloading', fileCount: files.length, sizeMB, newest: '', has494, has495 });
+          stableChecks++;
+          // Both depots stable + unlocked for 10 checks (20s) = done
+          if (has494 && has495 && stableChecks >= 10) {
+            send({ status: 'ready', fileCount: files.length, sizeMB, has494, has495 });
+            clearInterval(depotWatcher); depotWatcher = null;
+          } else {
+            send({ status: 'downloading', fileCount: files.length, sizeMB, newest: '', has494, has495 });
+          }
         }
       }
     } catch {
-      send({ status: 'downloading', fileCount: 0, sizeMB: 0, newest: '', has494: false, has495: false });
+      // Error scanning — keep last known values, don't reset stableChecks
+      send({ status: 'downloading', fileCount: lastCount, sizeMB: Math.round(lastSize / (1024 * 1024)), newest: 'Steam writing files...', has494: true, has495: true });
     }
   }, 2000);
 
@@ -365,7 +387,22 @@ ipcMain.handle('install-game', async (event, installBase) => {
       const rel      = path.relative(base, src);
       const destFile = path.join(dest, rel);
       fs.mkdirSync(path.dirname(destFile), { recursive: true });
-      fs.copyFileSync(src, destFile);
+      // Retry up to 5x on EBUSY (Steam may still be writing)
+      let retries = 5;
+      while (retries > 0) {
+        try {
+          fs.copyFileSync(src, destFile);
+          break;
+        } catch (e) {
+          if ((e.code === 'EBUSY' || e.code === 'EPERM') && retries > 1) {
+            send('status', `Steam still writing ${path.basename(src)}, waiting...`);
+            await new Promise(r => setTimeout(r, 3000));
+            retries--;
+          } else {
+            throw e;
+          }
+        }
+      }
       copied++;
       const pct = Math.floor((copied / all.length) * 100);
       send('file', `[${pct}%] ${rel}`);
