@@ -700,8 +700,10 @@ async function checkGithubUpdate(cfg) {
     const data = await ghGet(`https://api.github.com/repos/${owner}/${repo}/commits/${branch}`);
     if (!data || !data.sha) return;
     if (data.sha !== state.last_commit) {
+      const rawMsg = data.commit?.message || '';
+      const subject = rawMsg.split('\n')[0].trim() || 'New update available';
       win.webContents.send('update-available', {
-        sha: data.sha, message: data.commit?.message || 'New update available',
+        sha: data.sha, message: subject,
         owner, repo, branch,
       });
     }
@@ -722,7 +724,7 @@ async function autoUpdateLauncher(url, version) {
   if (!isPortable) return; // dev mode — skip
   const send = msg => win.webContents.send('launcher-update-progress', msg);
   try {
-    const exePath     = process.execPath;
+    const exePath     = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
     const exeDir      = path.dirname(exePath);
     const tmpExe      = path.join(exeDir, 'takeover_new.exe');
     const updaterPath = path.join(exeDir, 'updater.bat');
@@ -803,7 +805,7 @@ ipcMain.handle('apply-launcher-update', async (event, { url }) => {
   const send = msg => win.webContents.send('launcher-update-progress', msg);
   try {
     if (!isPortable) throw new Error('Self-update only works in packaged builds.');
-    const exePath    = process.execPath;
+    const exePath    = process.env.PORTABLE_EXECUTABLE_FILE || process.execPath;
     const exeDir     = path.dirname(exePath);
     const tmpExe     = path.join(exeDir, 'takeover_new.exe');
     const updaterPath = path.join(exeDir, 'updater.bat');
