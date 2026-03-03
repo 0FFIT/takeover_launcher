@@ -1,8 +1,8 @@
 # auto_paste.ps1
 # Uses SendInput (same API as Python pyautogui) to work with Steam's CEF console
 
-$CMD1 = "download_depot 252490 252494 4253474341122008329"
-$CMD2 = "download_depot 252490 252495 1591314921186864451"
+$CMD1 = "download_depot 252490 252494 5740964467494905272"
+$CMD2 = "download_depot 252490 252495 2089044749149059032"
 
 function Write-Status($msg) { Write-Output "STATUS:$msg" }
 function Write-Err($msg)    { Write-Output "ERROR:$msg" }

@@ -10,8 +10,8 @@ if missing:
     print(f"MISSING_DEPS:{','.join(missing)}", flush=True)
     sys.exit(1)
 
-CMD1 = "download_depot 252490 252494 4253474341122008329"
-CMD2 = "download_depot 252490 252495 1591314921186864451"
+CMD1 = "download_depot 252490 252494 5740964467494905272"
+CMD2 = "download_depot 252490 252495 2089044749149059032"
 
 pyautogui.FAILSAFE = False
 pyautogui.PAUSE    = 0.05
