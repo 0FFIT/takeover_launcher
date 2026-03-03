@@ -111,7 +111,12 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(() => { createWindow(); });
+// ─── Single instance lock ─────────────────────────────────────────────────────
+const gotLock = app.requestSingleInstanceLock();
+if (!gotLock) { app.quit(); } else {
+  app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
+  app.whenReady().then(() => { createWindow(); });
+}
 app.on('window-all-closed', () => app.quit());
 
 // ─── Window controls ──────────────────────────────────────────────────────────

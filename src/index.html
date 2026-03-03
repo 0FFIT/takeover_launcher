@@ -100,6 +100,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 
 .version-tag{position:fixed;bottom:9px;left:13px;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.08em;pointer-events:none;z-index:5}
 
+/* AUDIO CONTROLS */
+.audio-controls{position:fixed;bottom:6px;left:55px;z-index:6;display:none;align-items:center;gap:4px}
+.audio-controls.visible{display:flex}
+.ac-btn{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s;flex-shrink:0}
+.ac-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.15)}
+.ac-btn svg{width:10px;height:10px;fill:rgba(255,255,255,.4);stroke:none}
+.ac-btn:hover svg{fill:rgba(255,255,255,.7)}
+.ac-vol{-webkit-appearance:none;appearance:none;width:50px;height:2px;background:rgba(255,255,255,.12);border-radius:1px;outline:none;cursor:pointer}
+.ac-vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:background .15s}
+.ac-vol:hover::-webkit-slider-thumb{background:rgba(255,255,255,.7)}
+.ac-track{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,.2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
 /* LAUNCHER UPDATE BANNER */
 .launcher-update-banner{background:rgba(28,179,255,.08);border-bottom:1px solid rgba(28,179,255,.2);padding:7px 20px;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(28,179,255,.9);display:none;align-items:center;gap:12px}
 .launcher-update-banner.visible{display:flex}
@@ -206,6 +218,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 <audio id="bgAudio" loop></audio>
 
 <div class="version-tag" id="versionTag">v1.0.0</div>
+
+<div class="audio-controls" id="audioControls">
+  <div class="ac-btn" id="acPlayPause" title="Play / Pause">
+    <svg id="acPlayIcon" viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+    <svg id="acPauseIcon" viewBox="0 0 24 24" style="display:none"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+  </div>
+  <div class="ac-btn" id="acSkip" title="Next track">
+    <svg viewBox="0 0 24 24"><polygon points="3,3 13,12 3,21"/><rect x="16" y="3" width="3" height="18"/></svg>
+  </div>
+  <input type="range" class="ac-vol" id="acVolume" min="0" max="100" value="30" title="Volume"/>
+  <span class="ac-track" id="acTrackName"></span>
+</div>
 
 <div class="banner-stack">
   <div class="launcher-update-banner" id="launcherUpdateBanner">
@@ -365,6 +389,7 @@ let installListenerSet = false;
 let verifyListenerSet  = false;
 let updateListenerSet  = false;
 let gameInstalled = false;
+let audioFileList = [], audioIdx = 0;
 
 const $ = id => document.getElementById(id);
 
@@ -384,20 +409,14 @@ async function init() {
   if (mediaAll.length) { mediaAll.sort(() => Math.random()-.5); showMedia(0); }
 
   // Audio: if user put files in audio/ folder, play them
-  const audioFiles = await window.api.getAudioFiles();
-  if (audioFiles.length) {
+  audioFileList = await window.api.getAudioFiles();
+  if (audioFileList.length) {
     const audio = $('bgAudio');
-    // Shuffle and pick one
-    const pick = audioFiles[Math.floor(Math.random() * audioFiles.length)];
-    audio.src = pick;
-    audio.volume = 0.3;
-    audio.play().catch(() => {});
-    // When the song ends, play another random one
-    audio.addEventListener('ended', () => {
-      const next = audioFiles[Math.floor(Math.random() * audioFiles.length)];
-      audio.src = next;
-      audio.play().catch(() => {});
-    });
+    audioFileList.sort(() => Math.random() - 0.5);
+    audioIdx = 0;
+    playTrack(audioIdx);
+    audio.addEventListener('ended', () => { audioIdx = (audioIdx + 1) % audioFileList.length; playTrack(audioIdx); });
+    $('audioControls').classList.add('visible');
   }
 
   // Check if already installed
@@ -468,6 +487,33 @@ function handleDiscord(e) {
   const url = $('discordLink').dataset.url || config.discord_url;
   if (url && url !== 'https://discord.gg/REPLACE_ME') window.api.openExternal(url);
 }
+
+// ═══ AUDIO CONTROLS ═══
+function trackName(url) { try { return decodeURIComponent(url.split('/').pop().replace(/\.[^.]+$/, '')); } catch { return ''; } }
+function playTrack(idx) {
+  const audio = $('bgAudio');
+  audio.src = audioFileList[idx % audioFileList.length];
+  audio.volume = $('acVolume').value / 100;
+  audio.play().catch(() => {});
+  $('acTrackName').textContent = trackName(audioFileList[idx % audioFileList.length]);
+  $('acPlayIcon').style.display = 'none'; $('acPauseIcon').style.display = 'block';
+}
+function updatePlayPauseIcon() {
+  const paused = $('bgAudio').paused;
+  $('acPlayIcon').style.display = paused ? 'block' : 'none';
+  $('acPauseIcon').style.display = paused ? 'none' : 'block';
+}
+$('acPlayPause').addEventListener('click', () => {
+  const audio = $('bgAudio');
+  if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+  updatePlayPauseIcon();
+});
+$('acSkip').addEventListener('click', () => {
+  if (!audioFileList.length) return;
+  audioIdx = (audioIdx + 1) % audioFileList.length;
+  playTrack(audioIdx);
+});
+$('acVolume').addEventListener('input', e => { $('bgAudio').volume = e.target.value / 100; });
 
 // ═══ SET INSTALLED STATE ═══
 function setMainBtnLaunch() {
