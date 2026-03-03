@@ -21,7 +21,7 @@ const hashCachePath = path.join(rootDir, 'file_hashes.json');
 
 // ─── Ensure user-facing folders exist ─────────────────────────────────────────
 for (const dir of [
-  path.join(rootDir, 'audio'),
+  path.join(rootDir, 'assets', 'audio'),
   path.join(rootDir, 'assets', 'videos'),
   path.join(rootDir, 'assets', 'images'),
 ]) { try { fs.mkdirSync(dir, { recursive: true }); } catch {} }
@@ -152,8 +152,8 @@ ipcMain.handle('get-media-files', () => {
 // ─── Audio files ─────────────────────────────────────────────────────────────
 ipcMain.handle('get-audio-files', () => {
   const dirs = [
-    path.join(rootDir, 'audio'),
-    path.join(resourcesDir, 'audio'),
+    path.join(rootDir, 'assets', 'audio'),
+    path.join(resourcesDir, 'assets', 'audio'),
   ];
   const re = /\.(mp3|wav|ogg|flac|m4a|aac|wma)$/i;
   const seen = new Set();

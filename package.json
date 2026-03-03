@@ -51,13 +51,6 @@
       {
         "from": "config.json",
         "to": "config.json"
-      },
-      {
-        "from": "audio",
-        "to": "audio",
-        "filter": [
-          "**/*"
-        ]
       }
     ]
   },
