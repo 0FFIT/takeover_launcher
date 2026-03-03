@@ -19,6 +19,13 @@ const configPath   = path.join(rootDir, 'config.json');
 const statePath    = path.join(rootDir, 'launcher_state.json');
 const hashCachePath = path.join(rootDir, 'file_hashes.json');
 
+// ─── Ensure user-facing folders exist ─────────────────────────────────────────
+for (const dir of [
+  path.join(rootDir, 'audio'),
+  path.join(rootDir, 'assets', 'videos'),
+  path.join(rootDir, 'assets', 'images'),
+]) { try { fs.mkdirSync(dir, { recursive: true }); } catch {} }
+
 function icoPath() {
   return [
     path.join(resourcesDir, 'assets', 'icons', 'takeover.ico'),
@@ -691,6 +698,7 @@ function ghDownload(rawUrl, destPath) {
 }
 
 async function checkGithubUpdate(cfg) {
+  let found = false;
   try {
     const [owner, repo] = cfg.github_repo.split('/');
     const branch = cfg.github_branch || 'main';
@@ -698,7 +706,7 @@ async function checkGithubUpdate(cfg) {
 
     // Asset / config update check (commit-based)
     const data = await ghGet(`https://api.github.com/repos/${owner}/${repo}/commits/${branch}`);
-    if (!data || !data.sha) return;
+    if (!data || !data.sha) return found;
     if (data.sha !== state.last_commit) {
       const rawMsg = data.commit?.message || '';
       const subject = rawMsg.split('\n')[0].trim() || 'New update available';
@@ -706,6 +714,7 @@ async function checkGithubUpdate(cfg) {
         sha: data.sha, message: subject,
         owner, repo, branch,
       });
+      found = true;
     }
 
     // Launcher exe update check — single "version" field in remote config
@@ -716,8 +725,10 @@ async function checkGithubUpdate(cfg) {
       // Auto-update: download and restart without user prompt
       win.webContents.send('launcher-update-available', { version: remoteVer, url: exeUrl, auto: true });
       autoUpdateLauncher(exeUrl, remoteVer);
+      found = true;
     }
   } catch {}
+  return found;
 }
 
 async function autoUpdateLauncher(url, version) {
@@ -783,7 +794,7 @@ ipcMain.handle('apply-github-update', async (event, { owner, repo, branch, sha }
 
 ipcMain.handle('open-external', async (e, url) => shell.openExternal(url));
 ipcMain.handle('open-folder',   async (e, p)   => shell.openPath(p));
-ipcMain.handle('check-update',  async ()        => { const cfg = readConfig(); if (cfg.github_repo && cfg.github_repo !== 'YOUR_USERNAME/YOUR_REPO') await checkGithubUpdate(cfg); });
+ipcMain.handle('check-update',  async ()        => { const cfg = readConfig(); if (cfg.github_repo && cfg.github_repo !== 'YOUR_USERNAME/YOUR_REPO') return await checkGithubUpdate(cfg); return false; });
 
 // ─── Desktop shortcut ─────────────────────────────────────────────────────────
 ipcMain.handle('create-shortcut', async (event, installPath) => {

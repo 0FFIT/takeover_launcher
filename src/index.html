@@ -551,8 +551,11 @@ $('openFolderBtn').addEventListener('click', () => { if (installPath) window.api
 $('checkUpdateBtn').addEventListener('click', async () => {
   $('checkUpdateBtn').textContent = 'Checking...';
   $('checkUpdateBtn').disabled = true;
-  await window.api.checkUpdate();
-  setTimeout(() => { $('checkUpdateBtn').textContent = 'Check for Updates'; $('checkUpdateBtn').disabled = false; }, 3000);
+  const found = await window.api.checkUpdate();
+  if (!found) {
+    $('checkUpdateBtn').textContent = 'Up to date';
+    setTimeout(() => { $('checkUpdateBtn').textContent = 'Check for Updates'; $('checkUpdateBtn').disabled = false; }, 3000);
+  }
 });
 $('reVerifyBtn').addEventListener('click', () => {
   $('settingsPanel').classList.remove('open');
