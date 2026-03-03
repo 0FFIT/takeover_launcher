@@ -477,6 +477,7 @@ let installListenerSet = false;
 let verifyListenerSet  = false;
 let updateListenerSet  = false;
 let gameInstalled = false;
+let retryMode = false;
 let audioFileList = [], audioIdx = 0;
 
 const $ = id => document.getElementById(id);
@@ -689,6 +690,13 @@ $('gearBtn').addEventListener('click', () => {
   $('settingsPanel').classList.toggle('open');
   $('gearBtn').classList.toggle('active');
 });
+document.addEventListener('click', e => {
+  const panel = $('settingsPanel');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && !$('gearBtn').contains(e.target)) {
+    panel.classList.remove('open');
+    $('gearBtn').classList.remove('active');
+  }
+});
 $('browseBtn').addEventListener('click', async () => {
   const p = await window.api.selectInstallPath();
   if (p) { installPath = p; $('pathDisplay').textContent = p; }
@@ -721,6 +729,12 @@ $('reVerifyBtn').addEventListener('click', () => {
 $('mainBtn').addEventListener('click', async () => {
   const btn = $('mainBtn');
   if (btn.classList.contains('working')) return;
+
+  if (retryMode) {
+    retryMode = false;
+    onCheckFiles();
+    return;
+  }
 
   if (gameInstalled) {
     // Launch flow: verify first, then launch
@@ -860,7 +874,7 @@ async function onCheckFiles() {
     window.api.onInstallProgress(({ type, msg }) => {
       if      (type==='file')   { logAppend(msg,'file'); const pct=Math.min(logFileCount/Math.max(logFileCount+20,200)*95,95); $('progressBar').style.width=`${pct}%`; }
       else if (type==='status') logAppend(msg,'status');
-      else if (type==='error')  { logAppend(msg,'error'); $('mainBtn').className='main-btn install'; $('mainBtn').textContent='Retry'; }
+      else if (type==='error')  { logAppend(msg,'error'); $('mainBtn').className='main-btn install'; $('mainBtn').textContent='Retry'; retryMode = true; }
       else if (type==='done')   {
         $('progressBar').style.width='100%';
         logAppend('Installation complete!','done');
