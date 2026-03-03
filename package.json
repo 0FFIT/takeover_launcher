@@ -1,6 +1,6 @@
 {
   "name": "takeover-launcher",
-  "version": "1.5.5",
+  "version": "1.5.6",
   "description": "takeover Launcher",
   "main": "main.js",
   "scripts": {
