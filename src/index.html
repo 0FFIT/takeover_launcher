@@ -268,7 +268,6 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 <div class="bg" id="bg">
   <video id="bgVideo" autoplay loop muted playsinline></video>
   <img   id="bgImg"  class="bg-img" style="display:none;" alt=""/>
-  <canvas id="plexusCanvas" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1"></canvas>
 </div>
 <audio id="bgAudio"></audio>
 
@@ -411,6 +410,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
   <div class="setting-group">
     <div class="setting-label">Updates</div>
     <button class="panel-btn" id="checkUpdateBtn">Check for Updates</button>
+  </div>
+  <div class="setting-group">
+    <div class="setting-label">Server Browser</div>
+    <button class="panel-btn" id="toggleServerBrowserBtn">Hide Server Browser</button>
   </div>
 </div>
 
@@ -1053,92 +1056,25 @@ async function connectToServer(ip, port) {
 
 $('sbRefresh').addEventListener('click', refreshServers);
 
-// ═══ PLEXUS CANVAS ═══
+// ═══ SERVER BROWSER TOGGLE ═══
 (function() {
-  const canvas = $('plexusCanvas');
-  const ctx = canvas.getContext('2d');
-  let W, H, mouse = { x: -9999, y: -9999 };
-  const COUNT = 55, LINK_DIST = 140, MOUSE_DIST = 160, SPEED = 0.28;
+  const PREF_KEY = 'serverBrowserVisible';
+  const btn = $('toggleServerBrowserBtn');
+  const panel = $('serverBrowser');
+  let visible = localStorage.getItem(PREF_KEY) !== 'false';
 
-  const particles = [];
-
-  function resize() {
-    W = canvas.width  = canvas.offsetWidth;
-    H = canvas.height = canvas.offsetHeight;
+  function applyVisibility() {
+    panel.style.display = visible ? '' : 'none';
+    btn.textContent = visible ? 'Hide Server Browser' : 'Show Server Browser';
   }
 
-  function Particle() {
-    this.x  = Math.random() * W;
-    this.y  = Math.random() * H;
-    this.vx = (Math.random() - 0.5) * SPEED;
-    this.vy = (Math.random() - 0.5) * SPEED;
-    this.r  = Math.random() * 1.4 + 0.6;
-  }
+  btn.addEventListener('click', () => {
+    visible = !visible;
+    localStorage.setItem(PREF_KEY, visible);
+    applyVisibility();
+  });
 
-  function init() {
-    resize();
-    particles.length = 0;
-    for (let i = 0; i < COUNT; i++) particles.push(new Particle());
-  }
-
-  function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Update positions
-    for (const p of particles) {
-      p.x += p.vx;
-      p.y += p.vy;
-      if (p.x < 0 || p.x > W) p.vx *= -1;
-      if (p.y < 0 || p.y > H) p.vy *= -1;
-
-      // Mouse repulsion
-      const dx = p.x - mouse.x, dy = p.y - mouse.y;
-      const md = Math.sqrt(dx*dx + dy*dy);
-      if (md < MOUSE_DIST && md > 0) {
-        const force = (MOUSE_DIST - md) / MOUSE_DIST * 0.6;
-        p.vx += (dx / md) * force;
-        p.vy += (dy / md) * force;
-        // Clamp velocity
-        const spd = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
-        if (spd > SPEED * 4) { p.vx = (p.vx/spd)*SPEED*4; p.vy = (p.vy/spd)*SPEED*4; }
-      }
-    }
-
-    // Draw lines
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i+1; j < particles.length; j++) {
-        const a = particles[i], b = particles[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < LINK_DIST) {
-          const alpha = (1 - dist / LINK_DIST) * 0.18;
-          ctx.strokeStyle = `rgba(28,179,255,${alpha})`;
-          ctx.lineWidth = 0.7;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-    }
-
-    // Draw dots
-    for (const p of particles) {
-      ctx.fillStyle = 'rgba(28,179,255,0.45)';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    requestAnimationFrame(draw);
-  }
-
-  window.addEventListener('resize', () => { resize(); });
-  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
-  window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
-
-  init();
-  draw();
+  applyVisibility();
 })();
 
 init();
