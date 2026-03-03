@@ -11,7 +11,8 @@
 html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:'Exo 2',sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
 
 .bg{position:fixed;inset:0;z-index:0;background:#060b12}
-.bg video,.bg .bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.bg video,.bg .bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .8s ease}
+.bg video.fade-out,.bg .bg-img.fade-out{opacity:0}
 .bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,11,18,.6) 0%,transparent 20%,transparent 55%,rgba(6,11,18,.85) 100%),linear-gradient(90deg,rgba(6,11,18,.3) 0%,transparent 60%);pointer-events:none}
 
 /* BANNER STACK — both update banners live here, blue on top then green */
@@ -30,8 +31,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 /* LAYOUT */
 .launcher{position:relative;z-index:1;width:100vw;height:100vh;display:flex;flex-direction:column}
 
+/* VIEW SWITCHING */
+.view-container{display:none;flex:1;flex-direction:column;justify-content:flex-end}
+.view-container.active{display:flex}
+
 /* NAVBAR */
 .navbar{height:var(--nav-h);background:rgba(6,11,20,.92);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;padding:0 16px;flex-shrink:0;backdrop-filter:blur(10px);-webkit-app-region:drag;position:relative;z-index:10}
+.nav-tabs{display:flex;align-items:center;gap:2px;-webkit-app-region:no-drag;z-index:1}
+.nav-tab{padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(150,175,210,.4);cursor:pointer;border-radius:3px;transition:color .2s,background .2s}
+.nav-tab:hover{color:rgba(150,175,210,.7);background:rgba(255,255,255,.04)}
+.nav-tab.active{color:rgba(28,179,255,.9);background:rgba(28,179,255,.08)}
 .nav-title{position:absolute;left:50%;transform:translateX(-50%);font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:#fff;pointer-events:none}
 .nav-controls{margin-left:auto;display:flex;align-items:center;gap:8px;-webkit-app-region:no-drag}
 .wc{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
@@ -52,8 +61,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .log-title-text{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(0,230,118,.6)}
 .log-counter{margin-left:auto;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,230,118,.4)}
 .log-body{height:145px;overflow-y:auto;padding:6px 10px;scroll-behavior:smooth}
-.log-body::-webkit-scrollbar{width:4px}
-.log-body::-webkit-scrollbar-thumb{background:rgba(0,230,118,.2);border-radius:2px}
+.log-body::-webkit-scrollbar{width:5px}
+.log-body::-webkit-scrollbar-track{background:rgba(0,230,118,.03);border-radius:2px}
+.log-body::-webkit-scrollbar-thumb{background:rgba(0,230,118,.18);border-radius:2px}
+.log-body::-webkit-scrollbar-thumb:hover{background:rgba(0,230,118,.35)}
 .log-line{font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.55;padding:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .log-line.file{color:rgba(0,230,118,.85)}
 .log-line.status{color:rgba(100,180,255,.8)}
@@ -68,13 +79,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .install-row{display:flex;align-items:center;gap:10px;padding:0 0 10px}
 
 /* MAIN BUTTON */
-.main-btn{width:220px;height:52px;border-radius:4px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;transition:filter .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px}
+.main-btn{width:220px;height:52px;border-radius:4px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;transition:filter .2s,transform .15s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:10px}
 .main-btn.install{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dim) 100%)}
 .main-btn.launch{background:linear-gradient(135deg,#00b050 0%,#007a38 100%)}
 .main-btn.verify{background:linear-gradient(135deg,#e67e00 0%,#a05500 100%)}
 .main-btn.working{background:linear-gradient(135deg,#1a3a5a,#0f2540);cursor:default;filter:none;transform:none}
 .main-btn.success{background:linear-gradient(135deg,#1a7a40,#0f5a2a);cursor:default;filter:none;transform:none}
-.main-btn:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px)}
+.main-btn.install:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(28,179,255,.25)}
+.main-btn.launch:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,230,118,.25)}
+.main-btn.verify:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(230,126,0,.25)}
 .main-btn:active:not(.working):not(.success){transform:translateY(0)}
 
 .gear-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
@@ -112,6 +125,44 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .ac-vol:hover::-webkit-slider-thumb{background:rgba(255,255,255,.7)}
 .ac-track{font-family:'Share Tech Mono',monospace;font-size:9px;color:rgba(255,255,255,.2);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
+/* SERVER BROWSER */
+.server-browser{width:100%;max-width:780px;margin:0 auto;padding:0 20px 10px;display:flex;flex-direction:column;flex:1;min-height:0}
+.sb-header{display:flex;align-items:center;gap:12px;padding:14px 0 10px}
+.sb-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,215,230,.6)}
+.sb-status{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(150,175,210,.35);margin-left:auto}
+.sb-refresh{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0}
+.sb-refresh:hover{background:rgba(28,179,255,.14);border-color:rgba(28,179,255,.3)}
+.sb-refresh:hover svg{stroke:rgba(28,179,255,.9)}
+.sb-refresh svg{stroke:rgba(200,215,230,.5);transition:stroke .2s}
+.sb-refresh.spinning svg{animation:spin .6s linear}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.sb-table-wrap{flex:1;min-height:0;display:flex;flex-direction:column;background:rgba(4,8,14,.6);border:1px solid rgba(255,255,255,.06);border-radius:6px;overflow:hidden}
+.sb-table-header{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02)}
+.sb-table-body{flex:1;overflow-y:auto;min-height:0}
+.sb-table-body::-webkit-scrollbar{width:4px}
+.sb-table-body::-webkit-scrollbar-thumb{background:rgba(28,179,255,.15);border-radius:2px}
+.sb-col{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(140,165,195,.4)}
+.sb-col-status{width:24px;flex-shrink:0}
+.sb-col-name{flex:1;min-width:0}
+.sb-col-map{width:120px;flex-shrink:0}
+.sb-col-players{width:80px;flex-shrink:0;text-align:center}
+.sb-col-ping{width:55px;flex-shrink:0;text-align:center}
+.sb-col-connect{width:70px;flex-shrink:0;text-align:right}
+.sb-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s}
+.sb-row:hover{background:rgba(28,179,255,.04)}
+.sb-row:last-child{border-bottom:none}
+.sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sb-dot.online{background:rgba(0,230,118,.8);box-shadow:0 0 6px rgba(0,230,118,.3)}
+.sb-dot.offline{background:rgba(255,80,80,.6)}
+.sb-row .sb-col-name{font-family:'Exo 2',sans-serif;font-size:13px;font-weight:500;color:rgba(220,230,245,.85);text-transform:none;letter-spacing:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-row .sb-col-map{font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(150,175,210,.55);text-transform:none;letter-spacing:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-row .sb-col-players{font-family:'Share Tech Mono',monospace;font-size:12px;color:rgba(200,215,230,.7);text-transform:none;letter-spacing:normal}
+.sb-row .sb-col-ping{font-family:'Share Tech Mono',monospace;font-size:11px;text-transform:none;letter-spacing:normal}
+.sb-connect-btn{padding:4px 12px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.25);border-radius:3px;color:rgba(0,230,118,.85);font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:background .15s,border-color .15s}
+.sb-connect-btn:hover{background:rgba(0,230,118,.2);border-color:rgba(0,230,118,.4)}
+.sb-connect-btn:disabled{opacity:.3;cursor:not-allowed}
+.sb-empty{padding:40px 20px;text-align:center;font-family:'Rajdhani',sans-serif;font-size:13px;color:rgba(140,165,195,.35);letter-spacing:.06em}
+
 /* LAUNCHER UPDATE BANNER */
 .launcher-update-banner{background:rgba(28,179,255,.08);border-bottom:1px solid rgba(28,179,255,.2);padding:7px 20px;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(28,179,255,.9);display:none;align-items:center;gap:12px}
 .launcher-update-banner.visible{display:flex}
@@ -123,9 +174,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .launcher-update-banner-dismiss svg{width:8px;height:8px;stroke:rgba(255,255,255,.4);stroke-width:2;fill:none}
 
 /* LAUNCHER UPDATE MODAL */
-.lu-modal-overlay{display:none;position:fixed;inset:0;z-index:115;background:rgba(0,0,0,.75);backdrop-filter:blur(7px);align-items:center;justify-content:center}
-.lu-modal-overlay.open{display:flex}
-.lu-modal{width:420px;background:#080f1c;border:1px solid rgba(28,179,255,.18);border-radius:8px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:0}
+.lu-modal-overlay{display:flex;position:fixed;inset:0;z-index:115;background:rgba(0,0,0,.75);backdrop-filter:blur(7px);align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.lu-modal-overlay.open{opacity:1;pointer-events:auto}
+.lu-modal{width:420px;background:#080f1c;border:1px solid rgba(28,179,255,.18);border-radius:8px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:0;transform:scale(.96) translateY(8px);transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.lu-modal-overlay.open .lu-modal{transform:scale(1) translateY(0)}
 .lu-modal-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(28,179,255,.9);margin-bottom:7px}
 .lu-modal-msg{font-size:12px;color:rgba(140,170,200,.6);margin-bottom:14px;line-height:1.65}
 .lu-log{background:rgba(0,0,0,.45);border:1px solid rgba(28,179,255,.1);border-radius:4px;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(28,179,255,.75);height:80px;overflow-y:auto;margin-bottom:14px;display:none;line-height:1.6}
@@ -149,8 +201,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .dc-icon{width:19px;height:19px;fill:rgba(130,150,200,.6);transition:fill .15s}
 
 /* SETTINGS PANEL */
-.settings-panel{position:fixed;top:var(--nav-h);right:0;width:300px;height:calc(100vh - var(--nav-h));background:rgba(6,11,20,.97);border-left:1px solid rgba(255,255,255,.07);backdrop-filter:blur(16px);z-index:50;transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;padding:22px 18px}
-.settings-panel.open{transform:translateX(0)}
+.settings-panel{position:fixed;top:var(--nav-h);right:0;width:300px;height:calc(100vh - var(--nav-h));background:rgba(6,11,20,.97);border-left:1px solid rgba(255,255,255,.07);backdrop-filter:blur(16px);z-index:50;transform:translateX(100%);opacity:0;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .25s ease;display:flex;flex-direction:column;padding:22px 18px}
+.settings-panel.open{transform:translateX(0);opacity:1}
 .settings-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,215,230,.6);margin-bottom:20px;padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.06)}
 .setting-group{margin-bottom:16px}
 .setting-label{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(140,165,195,.5);margin-bottom:7px}
@@ -163,9 +215,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .panel-btn.danger:hover{background:rgba(255,80,80,.15);border-color:rgba(255,80,80,.35)}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);align-items:center;justify-content:center}
-.modal-overlay.open{display:flex}
-.modal{width:500px;background:#090f1d;border:1px solid rgba(255,255,255,.09);border-radius:8px;padding:28px 24px 22px;display:flex;flex-direction:column}
+.modal-overlay{display:flex;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);backdrop-filter:blur(7px);align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{width:500px;background:#090f1d;border:1px solid rgba(255,255,255,.09);border-radius:8px;padding:28px 24px 22px;display:flex;flex-direction:column;transform:scale(.96) translateY(8px);transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.modal-overlay.open .modal{transform:scale(1) translateY(0)}
 .modal-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fff;margin-bottom:7px}
 .modal-sub{font-size:12px;color:rgba(150,175,205,.6);margin-bottom:18px;line-height:1.65}
 .auto-paste-btn{width:100%;height:44px;background:rgba(28,179,255,.14);border:1px solid rgba(28,179,255,.32);border-radius:5px;color:rgba(28,179,255,.95);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:14px;transition:background .15s,opacity .15s}
@@ -191,9 +244,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .modal-btn.secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:rgba(170,190,215,.6)}
 
 /* UPDATE MODAL */
-.update-modal-overlay{display:none;position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.75);backdrop-filter:blur(7px);align-items:center;justify-content:center}
-.update-modal-overlay.open{display:flex}
-.update-modal{width:460px;background:#080f1c;border:1px solid rgba(0,230,118,.15);border-radius:8px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:0}
+.update-modal-overlay{display:flex;position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.75);backdrop-filter:blur(7px);align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.update-modal-overlay.open{opacity:1;pointer-events:auto}
+.update-modal{width:460px;background:#080f1c;border:1px solid rgba(0,230,118,.15);border-radius:8px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:0;transform:scale(.96) translateY(8px);transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.update-modal-overlay.open .update-modal{transform:scale(1) translateY(0)}
 .update-modal-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(0,230,118,.9);margin-bottom:7px}
 .update-modal-msg{font-size:12px;color:rgba(140,170,200,.6);margin-bottom:16px;line-height:1.65;letter-spacing:.02em}
 .update-modal-commit{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:8px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(0,230,118,.7);margin-bottom:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -263,6 +317,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 
 <div class="launcher">
   <nav class="navbar">
+    <div class="nav-tabs">
+      <div class="nav-tab active" id="tabHome" data-view="home">Home</div>
+      <div class="nav-tab" id="tabServers" data-view="servers">Servers</div>
+    </div>
     <div class="nav-title" id="navTitle">TAKEOVER</div>
     <div class="nav-controls">
       <div class="wc min" id="btnMin"><svg viewBox="0 0 9 9"><line x1="1" y1="4.5" x2="8" y2="4.5"/></svg></div>
@@ -271,6 +329,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
   </nav>
 
   <div class="hero">
+    <!-- HOME VIEW -->
+    <div class="view-container active" id="viewHome">
     <div class="actions">
 
       <!-- Log window -->
@@ -309,6 +369,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
         </a>
       </div>
     </div>
+    </div><!-- /viewHome -->
+
+    <!-- SERVERS VIEW -->
+    <div class="view-container" id="viewServers">
+      <div class="server-browser" id="serverBrowser">
+        <div class="sb-header">
+          <span class="sb-title">Server Browser</span>
+          <span class="sb-status" id="sbStatus"></span>
+          <button class="sb-refresh" id="sbRefresh" title="Refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          </button>
+        </div>
+        <div class="sb-table-wrap">
+          <div class="sb-table-header">
+            <span class="sb-col sb-col-status"></span>
+            <span class="sb-col sb-col-name">Server</span>
+            <span class="sb-col sb-col-map">Map</span>
+            <span class="sb-col sb-col-players">Players</span>
+            <span class="sb-col sb-col-ping">Ping</span>
+            <span class="sb-col sb-col-connect"></span>
+          </div>
+          <div class="sb-table-body" id="sbBody">
+            <div class="sb-empty">No servers configured</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /viewServers -->
+
   </div>
 </div>
 
@@ -546,16 +634,22 @@ function showMedia(idx) {
   const item = mediaAll[idx % mediaAll.length];
   clearTimeout(mediaTimer);
   const bgVideo = $('bgVideo'), bgImg = $('bgImg');
-  if (item.type === 'video') {
-    bgImg.style.display = 'none'; bgVideo.style.display = 'block';
-    bgVideo.src = item.url; bgVideo.load(); bgVideo.play().catch(()=>{});
-    bgVideo.onended = () => { mediaIdx++; showMedia(mediaIdx); };
-    mediaTimer = setTimeout(() => { mediaIdx++; showMedia(mediaIdx); }, 35000);
-  } else {
-    bgVideo.pause(); bgVideo.style.display = 'none';
-    bgImg.style.display = 'block'; bgImg.src = item.url;
-    mediaTimer = setTimeout(() => { mediaIdx++; showMedia(mediaIdx); }, 9000);
-  }
+  // Fade out current
+  bgVideo.classList.add('fade-out');
+  bgImg.classList.add('fade-out');
+  setTimeout(() => {
+    if (item.type === 'video') {
+      bgImg.style.display = 'none'; bgVideo.style.display = 'block';
+      bgVideo.src = item.url; bgVideo.load(); bgVideo.play().catch(()=>{});
+      bgVideo.onended = () => { mediaIdx++; showMedia(mediaIdx); };
+      mediaTimer = setTimeout(() => { mediaIdx++; showMedia(mediaIdx); }, 35000);
+    } else {
+      bgVideo.pause(); bgVideo.style.display = 'none';
+      bgImg.style.display = 'block'; bgImg.src = item.url;
+      mediaTimer = setTimeout(() => { mediaIdx++; showMedia(mediaIdx); }, 9000);
+    }
+    requestAnimationFrame(() => { bgVideo.classList.remove('fade-out'); bgImg.classList.remove('fade-out'); });
+  }, 400);
 }
 
 // ═══ LOG ═══
@@ -899,6 +993,67 @@ $('shortcutBtn').addEventListener('click', async () => {
     $('shortcutBtn').disabled = false;
   }
 });
+
+// ═══ TAB SWITCHING ═══
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    const view = tab.dataset.view;
+    $('view' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+    if (view === 'servers') refreshServers();
+    else clearTimeout(serverRefreshTimer);
+  });
+});
+
+// ═══ SERVER BROWSER ═══
+let serverData = [];
+let serverRefreshTimer = null;
+let serverQueryInProgress = false;
+
+function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+async function refreshServers() {
+  if (serverQueryInProgress) return;
+  serverQueryInProgress = true;
+  const btn = $('sbRefresh');
+  btn.classList.add('spinning');
+  $('sbStatus').textContent = 'Querying...';
+  try {
+    serverData = await window.api.queryServers();
+    renderServerList();
+    const online = serverData.filter(s => s.online).length;
+    $('sbStatus').textContent = `${online}/${serverData.length} online`;
+  } catch { $('sbStatus').textContent = 'Query failed'; }
+  serverQueryInProgress = false;
+  setTimeout(() => btn.classList.remove('spinning'), 600);
+  clearTimeout(serverRefreshTimer);
+  if ($('tabServers').classList.contains('active')) serverRefreshTimer = setTimeout(refreshServers, 30000);
+}
+
+function renderServerList() {
+  const body = $('sbBody');
+  if (!serverData.length) { body.innerHTML = '<div class="sb-empty">No servers configured in config.json</div>'; return; }
+  body.innerHTML = serverData.map(srv => {
+    const dot = srv.online ? 'online' : 'offline';
+    const name = srv.displayName || `${srv.ip}:${srv.port}`;
+    const map = srv.online ? (srv.map || '\u2014') : '\u2014';
+    const players = srv.online ? `${srv.players}/${srv.maxPlayers}` : '\u2014';
+    const pingVal = srv.online ? srv.ping : '\u2014';
+    const pingColor = srv.online ? (srv.ping < 50 ? 'rgba(0,230,118,.8)' : srv.ping < 100 ? 'rgba(255,200,0,.8)' : 'rgba(255,80,80,.8)') : 'rgba(150,175,210,.35)';
+    const dis = (!srv.online || !gameInstalled) ? 'disabled' : '';
+    return `<div class="sb-row"><span class="sb-col sb-col-status"><span class="sb-dot ${dot}"></span></span><span class="sb-col sb-col-name" title="${escHtml(name)}">${escHtml(name)}</span><span class="sb-col sb-col-map" title="${escHtml(map)}">${escHtml(map)}</span><span class="sb-col sb-col-players">${players}</span><span class="sb-col sb-col-ping" style="color:${pingColor}">${pingVal}${srv.online ? 'ms' : ''}</span><span class="sb-col sb-col-connect"><button class="sb-connect-btn" ${dis} onclick="connectToServer('${srv.ip}',${srv.port})">Connect</button></span></div>`;
+  }).join('');
+}
+
+async function connectToServer(ip, port) {
+  if (!gameInstalled) return;
+  const r = await window.api.connectServer({ ip, port });
+  if (!r.success) $('sbStatus').textContent = r.error || 'Connect failed';
+}
+
+$('sbRefresh').addEventListener('click', refreshServers);
 
 init();
 </script>

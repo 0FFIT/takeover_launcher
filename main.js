@@ -6,6 +6,7 @@ const https    = require('https');
 const http     = require('http');
 const { execSync, spawn } = require('child_process');
 const { pathToFileURL } = require('url');
+const dgram    = require('dgram');
 
 let win;
 
@@ -852,4 +853,96 @@ ipcMain.handle('apply-launcher-update', async (event, { url }) => {
     send(`ERROR: ${e.message}`);
     return { success: false, error: e.message };
   }
+});
+
+// ─── A2S Server Query ────────────────────────────────────────────────────────
+const A2S_INFO_PACKET = Buffer.from([
+  0xFF, 0xFF, 0xFF, 0xFF, 0x54,
+  ...Buffer.from('Source Engine Query\0'),
+]);
+
+function parseA2SInfo(buf) {
+  let offset = 5; // skip header FF FF FF FF 49
+  const readByte   = () => buf[offset++];
+  const readShort  = () => { const v = buf.readUInt16LE(offset); offset += 2; return v; };
+  const readString = () => {
+    const start = offset;
+    while (offset < buf.length && buf[offset] !== 0) offset++;
+    const str = buf.toString('utf8', start, offset);
+    offset++; // skip null terminator
+    return str;
+  };
+  readByte(); // protocol
+  const name       = readString();
+  const map        = readString();
+  readString(); // folder
+  readString(); // game
+  readShort();  // steamAppId
+  const players    = readByte();
+  const maxPlayers = readByte();
+  const bots       = readByte();
+  return { name, map, players, maxPlayers, bots };
+}
+
+function queryServer(ip, port, timeoutMs = 3000) {
+  return new Promise((resolve) => {
+    const sock = dgram.createSocket('udp4');
+    let resolved = false;
+    const startTime = Date.now();
+
+    const finish = (result) => {
+      if (resolved) return;
+      resolved = true;
+      try { sock.close(); } catch {}
+      resolve(result);
+    };
+
+    const timer = setTimeout(() => finish({ online: false }), timeoutMs);
+
+    sock.on('error', () => { clearTimeout(timer); finish({ online: false }); });
+
+    sock.on('message', (buf) => {
+      if (buf.length >= 9 && buf[4] === 0x41) {
+        // Challenge response — resend with challenge appended
+        const retry = Buffer.concat([A2S_INFO_PACKET, buf.slice(5, 9)]);
+        sock.send(retry, 0, retry.length, port, ip);
+        return;
+      }
+      if (buf.length > 6 && buf[4] === 0x49) {
+        clearTimeout(timer);
+        try { finish({ online: true, ping: Date.now() - startTime, ...parseA2SInfo(buf) }); }
+        catch { finish({ online: true, ping: Date.now() - startTime }); }
+      }
+    });
+
+    sock.send(A2S_INFO_PACKET, 0, A2S_INFO_PACKET.length, port, ip, (err) => {
+      if (err) { clearTimeout(timer); finish({ online: false }); }
+    });
+  });
+}
+
+ipcMain.handle('query-servers', async () => {
+  const cfg = readConfig();
+  const servers = cfg.servers || [];
+  if (!servers.length) return [];
+  return Promise.all(servers.map(async (srv) => {
+    const r = await queryServer(srv.ip, srv.port || 28015);
+    return { ip: srv.ip, port: srv.port || 28015, configName: srv.name, ...r,
+      displayName: r.name || srv.name || `${srv.ip}:${srv.port || 28015}` };
+  }));
+});
+
+ipcMain.handle('connect-server', async (event, { ip, port }) => {
+  const state = readState();
+  if (!state.install_path) return { success: false, error: 'Game not installed' };
+  const rustExe = path.join(state.install_path, 'Rust.exe');
+  if (!fs.existsSync(rustExe)) return { success: false, error: 'Rust.exe not found' };
+  try {
+    const child = spawn(rustExe, ['+connect', `${ip}:${port}`], {
+      detached: true, stdio: 'ignore', cwd: state.install_path,
+    });
+    child.unref();
+    setTimeout(() => app.quit(), 1500);
+    return { success: true };
+  } catch(e) { return { success: false, error: e.message }; }
 });

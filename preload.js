@@ -25,6 +25,8 @@ contextBridge.exposeInMainWorld('api', {
   watchDepotProgress:    ()  => ipcRenderer.invoke('watch-depot-progress'),
   stopDepotWatch:        ()  => ipcRenderer.invoke('stop-depot-watch'),
   getAudioFiles:         ()  => ipcRenderer.invoke('get-audio-files'),
+  queryServers:          ()  => ipcRenderer.invoke('query-servers'),
+  connectServer:         (d) => ipcRenderer.invoke('connect-server', d),
 
   onConfig:                    (cb) => ipcRenderer.on('config',                    (_e,d) => cb(d)),
   onAlreadyInstalled:          (cb) => ipcRenderer.on('already-installed',          (_e,d) => cb(d)),
