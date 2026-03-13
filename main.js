@@ -613,12 +613,7 @@ ipcMain.handle('check-install', async () => {
   return { installed: false };
 });
 
-// ─── Embedded Python ──────────────────────────────────────────────────────────
-const pythonDir    = path.join(rootDir, 'python-embed');
-const pythonExe    = path.join(pythonDir, 'python.exe');
-const getPipUrl    = 'https://bootstrap.pypa.io/get-pip.py';
-const pythonZipUrl = 'https://www.python.org/ftp/python/3.11.9/python-3.11.9-embed-amd64.zip';
-
+// ─── Download helper (used for updates) ───────────────────────────────────────
 function downloadFile(url, dest, onProgress) {
   return new Promise((resolve, reject) => {
     const file = fs.createWriteStream(dest);
@@ -652,103 +647,65 @@ function downloadFile(url, dest, onProgress) {
   });
 }
 
-function unzip(zipPath, destDir) {
-  return new Promise((resolve, reject) => {
-    const ps = spawn('powershell.exe', [
-      '-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass',
-      '-Command',
-      `Expand-Archive -Path "${zipPath}" -DestinationPath "${destDir}" -Force`,
-    ]);
-    ps.on('close', code => code === 0 ? resolve() : reject(new Error(`Unzip failed: ${code}`)));
-    ps.on('error', reject);
-  });
-}
-
-function runPython(args, onLine) {
-  return new Promise((resolve, reject) => {
-    const proc = spawn(pythonExe, args, { cwd: pythonDir });
-    proc.stdout.on('data', chunk => {
-      for (const raw of chunk.toString('utf8').split('\n')) {
-        const line = raw.trim(); if (line) onLine(line);
-      }
-    });
-    proc.stderr.on('data', chunk => {
-      const t = chunk.toString('utf8').trim();
-      if (t) onLine('ERR:' + t.split('\n')[0]);
-    });
-    proc.on('error', reject);
-    proc.on('close', resolve);
-  });
-}
-
-async function ensureEmbeddedPython(onStatus) {
-  if (fs.existsSync(pythonExe)) return true;
-  onStatus('Setting up Python (one-time, ~30s)...');
-  fs.mkdirSync(pythonDir, { recursive: true });
-  const zipDest = path.join(pythonDir, 'python-embed.zip');
-  onStatus('Downloading Python (~25 MB)...');
-  await downloadFile(pythonZipUrl, zipDest);
-  onStatus('Extracting Python...');
-  await unzip(zipDest, pythonDir);
-  fs.unlinkSync(zipDest);
-  const pthFile = path.join(pythonDir, 'python311._pth');
-  if (fs.existsSync(pthFile)) {
-    let pth = fs.readFileSync(pthFile, 'utf8');
-    pth = pth.replace('#import site', 'import site');
-    fs.writeFileSync(pthFile, pth, 'utf8');
-  }
-  onStatus('Installing pip...');
-  const getPipDest = path.join(pythonDir, 'get-pip.py');
-  await downloadFile(getPipUrl, getPipDest);
-  await runPython([getPipDest, '--no-warn-script-location'], l => {
-    if (l.includes('Successfully') || l.includes('Installing')) onStatus(l.slice(0,60));
-  });
-  onStatus('Installing pyautogui, pyperclip...');
-  await runPython(['-m','pip','install','--no-warn-script-location',
-    'pyautogui','pyperclip'], l => {
-    if (l.includes('Successfully') || l.includes('Installing')) onStatus(l.slice(0,60));
-  });
-  return fs.existsSync(pythonExe);
-}
-
-// ─── Auto-paste ───────────────────────────────────────────────────────────────
+// ─── Auto-paste (PowerShell script) ──────────────────────────────────────────
 ipcMain.handle('run-auto-paste', () => new Promise(async resolve => {
-  const emit = (type, extra={}) => win.webContents.send('auto-paste-status', { type, ...extra });
+  const emit = (type, extra = {}) =>
+    win.webContents.send('auto-paste-status', { type, ...extra });
 
   const scriptPath = isPortable
-    ? path.join(resourcesDir, 'scripts', 'auto_paste.py')
-    : path.join(__dirname, 'scripts', 'auto_paste.py');
+    ? path.join(resourcesDir, 'scripts', 'auto_paste.ps1')
+    : path.join(__dirname, 'scripts', 'auto_paste.ps1');
 
+  if (!fs.existsSync(scriptPath)) {
+    emit('error', { message: 'auto_paste.ps1 not found in scripts folder.' });
+    return resolve({ code: -1 });
+  }
+
+  // Minimize launcher and ensure Steam console is open
   win.minimize();
   await shell.openExternal('steam://open/console');
 
-  try {
-    await ensureEmbeddedPython(msg => emit('status', { message: msg }));
-  } catch(e) {
-    win.restore(); emit('error', { message: `Setup failed: ${e.message}` });
-    return resolve({ code:-1 });
-  }
+  emit('status', { message: 'Waiting for Steam console and sending commands...' });
 
-  if (!fs.existsSync(pythonExe)) {
-    win.restore(); emit('error', { message: 'Python setup failed. Check internet.' });
-    return resolve({ code:-1 });
-  }
+  const proc = spawn('powershell.exe', [
+    '-NoProfile',
+    '-NonInteractive',
+    '-ExecutionPolicy', 'Bypass',
+    '-File', scriptPath,
+  ]);
 
-  const proc = spawn(pythonExe, [scriptPath]);
   proc.stdout.on('data', chunk => {
     for (const raw of chunk.toString('utf8').split('\n')) {
-      const line = raw.trim(); if (!line) continue;
-      if      (line.startsWith('STATUS:')) emit('status',  { message: line.slice(7) });
-      else if (line.startsWith('ERROR:'))  emit('error',   { message: line.slice(6) });
-      else if (line === 'DONE') { win.restore(); emit('done'); }
+      const line = raw.trim();
+      if (!line) continue;
+      if (line.startsWith('STATUS:')) {
+        emit('status', { message: line.slice(7) });
+      } else if (line.startsWith('ERROR:')) {
+        emit('error', { message: line.slice(6) });
+      } else if (line === 'DONE') {
+        win.restore();
+        emit('done');
+      }
     }
   });
+
   proc.stderr.on('data', chunk => {
     const msg = chunk.toString('utf8').trim();
-    if (msg && !msg.includes('Warning')) emit('error', { message: msg.split('\n')[0] });
+    if (msg) emit('error', { message: msg.split('\n')[0] });
   });
-  proc.on('error', err => { win.restore(); emit('error', { message: err.message }); resolve({ code:-1 }); });
-  proc.on('close', code => resolve({ code }));
+
+  proc.on('error', err => {
+    win.restore();
+    emit('error', { message: err.message });
+    resolve({ code: -1 });
+  });
+
+  proc.on('close', code => {
+    if (code !== 0) {
+      emit('error', { message: `Auto-paste script exited with code ${code}` });
+    }
+    resolve({ code });
+  });
 }));
 
 // ─── GitHub Update ────────────────────────────────────────────────────────────

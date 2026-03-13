@@ -1,62 +1,64 @@
 {
-  "name": "takeover-launcher",
-  "version": "2.0.6",
-  "description": "takeover Launcher",
-  "main": "main.js",
-  "scripts": {
-    "start": "electron .",
-    "build": "electron-builder --win --x64"
-  },
-  "build": {
-    "appId": "com.takeover.launcher",
-    "productName": "takeover",
-    "executableName": "takeover",
-    "afterPack": "./afterPack.js",
-    "compression": "maximum",
-    "directories": {
-      "output": "dist"
-    },
-    "win": {
-      "target": [
-        {
-          "target": "portable",
-          "arch": [
-            "x64"
-          ]
-        }
-      ],
-      "icon": "build/icon.ico",
-      "executableName": "takeover"
-    },
-    "files": [
-      "main.js",
-      "preload.js",
-      "src/**/*"
-    ],
-    "extraResources": [
-      {
-        "from": "assets",
-        "to": "assets",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "scripts",
-        "to": "scripts",
-        "filter": [
-          "**/*"
-        ]
-      },
-      {
-        "from": "config.json",
-        "to": "config.json"
-      }
-    ]
-  },
-  "devDependencies": {
-    "electron": "^40.6.1",
-    "electron-builder": "^26.8.1",
-    "rcedit": "^4.0.0"
-  }
+    "name":  "takeover-launcher",
+    "version":  "2.1.2",
+    "description":  "takeover Launcher",
+    "author":  "takeover",
+    "main":  "main.js",
+    "scripts":  {
+                    "start":  "electron .",
+                    "build":  "electron-builder --win --x64"
+                },
+    "build":  {
+                  "appId":  "com.takeover.launcher",
+                  "productName":  "takeover",
+                  "executableName":  "takeover",
+                  "afterPack":  "./afterPack.js",
+                  "compression":  "maximum",
+                  "artifactName":  "takeover.${version}.exe",
+                  "directories":  {
+                                      "output":  "dist"
+                                  },
+                  "win":  {
+                              "target":  [
+                                             {
+                                                 "target":  "portable",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             }
+                                         ],
+                              "icon":  "build/icon.ico",
+                              "executableName":  "takeover"
+                          },
+                  "files":  [
+                                "main.js",
+                                "preload.js",
+                                "src/**/*"
+                            ],
+                  "extraResources":  [
+                                         {
+                                             "from":  "assets",
+                                             "to":  "assets",
+                                             "filter":  [
+                                                            "**/*"
+                                                        ]
+                                         },
+                                         {
+                                             "from":  "scripts",
+                                             "to":  "scripts",
+                                             "filter":  [
+                                                            "**/*"
+                                                        ]
+                                         },
+                                         {
+                                             "from":  "config.json",
+                                             "to":  "config.json"
+                                         }
+                                     ]
+              },
+    "devDependencies":  {
+                            "electron":  "^40.6.1",
+                            "electron-builder":  "^26.8.1",
+                            "rcedit":  "^4.0.0"
+                        }
 }
