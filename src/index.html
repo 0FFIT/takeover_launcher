@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#1cb3ff;--blue-dim:#0a8fd4;--green:#00e676;--nav-h:48px}
+:root{--blue:#1cb3ff;--blue-dim:#0a8fd4;--green:#00e676;--nav-h:48px;--accent:var(--blue);--accent-dim:var(--blue-dim);--accent-rgb:28,179,255}
 html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:'Exo 2',sans-serif;color:#fff;user-select:none;-webkit-user-select:none}
 
 .bg{position:fixed;inset:0;z-index:0;background:#060b12}
@@ -72,21 +72,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 
 /* MAIN BUTTON */
 .main-btn{width:220px;height:52px;border-radius:4px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;transition:filter .2s,transform .15s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:10px}
-.main-btn.install{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dim) 100%)}
+.main-btn.install{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-dim) 100%)}
 .main-btn.launch{background:linear-gradient(135deg,#00b050 0%,#007a38 100%)}
 .main-btn.verify{background:linear-gradient(135deg,#e67e00 0%,#a05500 100%)}
 .main-btn.working{background:linear-gradient(135deg,#1a3a5a,#0f2540);cursor:default;filter:none;transform:none}
 .main-btn.success{background:linear-gradient(135deg,#1a7a40,#0f5a2a);cursor:default;filter:none;transform:none}
-.main-btn.install:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(28,179,255,.25)}
+.main-btn.install:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(var(--accent-rgb),.25)}
 .main-btn.launch:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,230,118,.25)}
 .main-btn.verify:hover:not(.working):not(.success){filter:brightness(1.12);transform:translateY(-1px);box-shadow:0 4px 20px rgba(230,126,0,.25)}
 .main-btn:active:not(.working):not(.success){transform:translateY(0)}
 
 .gear-btn{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s}
-.gear-btn:hover{background:rgba(28,179,255,.14);border-color:rgba(28,179,255,.3)}
+.gear-btn:hover{background:rgba(var(--accent-rgb),.14);border-color:rgba(var(--accent-rgb),.3)}
 .gear-btn svg{width:16px;height:16px;stroke:rgba(200,215,230,.6);stroke-width:2;fill:none}
-.gear-btn.active{background:rgba(28,179,255,.2);border-color:rgba(28,179,255,.4)}
-.gear-btn.active svg{stroke:rgba(28,179,255,.9)}
+.gear-btn.active{background:rgba(var(--accent-rgb),.2);border-color:rgba(var(--accent-rgb),.4)}
+.gear-btn.active svg{stroke:rgba(var(--accent-rgb),.9)}
 
 /* VERIFY SUMMARY BAR */
 .verify-bar{width:680px;margin:0 auto 6px;padding:6px 14px;background:rgba(4,8,14,.8);border:1px solid rgba(255,255,255,.07);border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:11px;display:none;align-items:center;gap:16px}
@@ -112,13 +112,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .ac-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.15)}
 .ac-btn svg{width:10px;height:10px;fill:rgba(255,255,255,.4);stroke:none}
 .ac-btn:hover svg{fill:rgba(255,255,255,.7)}
-.ac-btn.active{background:rgba(28,179,255,.12);border-color:rgba(28,179,255,.25)}
-.ac-btn.active svg{fill:rgba(28,179,255,.7)}
-.ac-btn.active:hover svg{fill:rgba(28,179,255,.9)}
+.ac-btn.active{background:rgba(var(--accent-rgb),.12);border-color:rgba(var(--accent-rgb),.25)}
+.ac-btn.active svg{fill:rgba(var(--accent-rgb),.7)}
+.ac-btn.active:hover svg{fill:rgba(var(--accent-rgb),.9)}
 /* Loop icon uses stroke, not fill */
 #acLoop svg{fill:none;stroke:rgba(255,255,255,.4);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 #acLoop:hover svg{stroke:rgba(255,255,255,.7)}
-#acLoop.active svg{stroke:rgba(28,179,255,.7)}
+#acLoop.active svg{stroke:rgba(var(--accent-rgb),.7)}
 .ac-vol{-webkit-appearance:none;appearance:none;width:50px;height:2px;background:rgba(255,255,255,.12);border-radius:1px;outline:none;cursor:pointer}
 .ac-vol::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:background .15s}
 .ac-vol:hover::-webkit-slider-thumb{background:rgba(255,255,255,.7)}
@@ -130,17 +130,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .sb-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(200,215,230,.6)}
 .sb-status{font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(150,175,210,.35);margin-left:auto}
 .sb-refresh{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0}
-.sb-refresh:hover{background:rgba(28,179,255,.14);border-color:rgba(28,179,255,.3)}
-.sb-refresh:hover svg{stroke:rgba(28,179,255,.9)}
+.sb-refresh:hover{background:rgba(var(--accent-rgb),.14);border-color:rgba(var(--accent-rgb),.3)}
+.sb-refresh:hover svg{stroke:rgba(var(--accent-rgb),.9)}
 .sb-refresh svg{stroke:rgba(200,215,230,.5);transition:stroke .2s}
 .sb-refresh.spinning svg{animation:spin .6s linear}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 .sb-table-wrap{flex:1;min-height:0;display:flex;flex-direction:column;background:rgba(4,8,14,.6);border:1px solid rgba(255,255,255,.06);border-radius:6px;overflow:hidden}
 .sb-table-header{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.02)}
+.sb-col-fav{width:22px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.sb-fav-btn{width:18px;height:18px;border-radius:50%;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.sb-fav-btn:hover{background:rgba(255,255,255,.08);transform:translateY(-.5px)}
+.sb-fav-btn svg{width:10px;height:10px;fill:none;stroke:rgba(200,215,230,.55);stroke-width:2}
+.sb-fav-btn.fav{border-color:rgba(255,200,0,.25);background:rgba(255,200,0,.08)}
+.sb-fav-btn.fav svg{fill:rgba(255,200,0,.85);stroke:rgba(255,200,0,.9)}
+.sb-row.favorited{background:linear-gradient(90deg,rgba(255,200,0,.06),transparent 70%)}
 .sb-table-body{overflow-y:auto;max-height:160px}
 .sb-table-body::-webkit-scrollbar{width:4px}
-.sb-table-body::-webkit-scrollbar-thumb{background:rgba(28,179,255,.15);border-radius:2px}
+.sb-table-body::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),.15);border-radius:2px}
 .sb-col{font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(140,165,195,.4)}
+.sb-col.sortable{cursor:pointer;user-select:none}
+.sb-col.sortable:hover{color:rgba(200,215,230,.75)}
+.sb-sort-arrow{margin-left:6px;opacity:.55}
 .sb-col-status{width:24px;flex-shrink:0}
 .sb-col-name{flex:1;min-width:0}
 .sb-col-map{width:120px;flex-shrink:0}
@@ -148,7 +158,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .sb-col-ping{width:55px;flex-shrink:0;text-align:center}
 .sb-col-connect{width:70px;flex-shrink:0;text-align:right}
 .sb-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s}
-.sb-row:hover{background:rgba(28,179,255,.04)}
+.sb-row:hover{background:rgba(var(--accent-rgb),.04)}
 .sb-row:last-child{border-bottom:none}
 .sb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .sb-dot.online{background:rgba(0,230,118,.8);box-shadow:0 0 6px rgba(0,230,118,.3);animation:sb-pulse 2s ease-in-out infinite}
@@ -163,12 +173,18 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .sb-connect-btn:disabled{opacity:.3;cursor:not-allowed}
 .sb-empty{padding:40px 20px;text-align:center;font-family:'Rajdhani',sans-serif;font-size:13px;color:rgba(140,165,195,.35);letter-spacing:.06em}
 
+/* DIRECT CONNECT */
+.sb-direct-connect{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01)}
+.sb-direct-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:3px;padding:5px 10px;color:rgba(200,215,235,.7);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;min-width:0;-webkit-user-select:text;user-select:text}
+.sb-direct-input:focus{border-color:rgba(var(--accent-rgb),.25);background:rgba(var(--accent-rgb),.03)}
+.sb-direct-input::placeholder{color:rgba(140,165,195,.28)}
+
 /* LAUNCHER UPDATE BANNER */
-.launcher-update-banner{background:rgba(28,179,255,.08);border-bottom:1px solid rgba(28,179,255,.2);padding:7px 20px;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(28,179,255,.9);display:none;align-items:center;gap:12px}
+.launcher-update-banner{background:rgba(var(--accent-rgb),.08);border-bottom:1px solid rgba(var(--accent-rgb),.2);padding:7px 20px;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(var(--accent-rgb),.9);display:none;align-items:center;gap:12px}
 .launcher-update-banner.visible{display:flex}
 .launcher-update-banner-msg{flex:1}
-.launcher-update-banner-btn{padding:4px 16px;background:rgba(28,179,255,.15);border:1px solid rgba(28,179,255,.3);border-radius:3px;color:rgba(28,179,255,.95);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s}
-.launcher-update-banner-btn:hover{background:rgba(28,179,255,.28)}
+.launcher-update-banner-btn{padding:4px 16px;background:rgba(var(--accent-rgb),.15);border:1px solid rgba(var(--accent-rgb),.3);border-radius:3px;color:rgba(var(--accent-rgb),.95);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s}
+.launcher-update-banner-btn:hover{background:rgba(var(--accent-rgb),.28)}
 .launcher-update-banner-dismiss{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s}
 .launcher-update-banner-dismiss:hover{background:rgba(255,255,255,.12)}
 .launcher-update-banner-dismiss svg{width:8px;height:8px;stroke:rgba(255,255,255,.4);stroke-width:2;fill:none}
@@ -176,22 +192,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 /* LAUNCHER UPDATE MODAL */
 .lu-modal-overlay{display:flex;position:fixed;inset:0;z-index:115;background:rgba(0,0,0,.75);backdrop-filter:blur(7px);align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .lu-modal-overlay.open{opacity:1;pointer-events:auto}
-.lu-modal{width:420px;background:#080f1c;border:1px solid rgba(28,179,255,.18);border-radius:8px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:0;transform:scale(.96) translateY(8px);transition:transform .25s cubic-bezier(.22,1,.36,1)}
+.lu-modal{width:420px;background:#080f1c;border:1px solid rgba(var(--accent-rgb),.18);border-radius:8px;padding:26px 22px 20px;display:flex;flex-direction:column;gap:0;transform:scale(.96) translateY(8px);transition:transform .25s cubic-bezier(.22,1,.36,1)}
 .lu-modal-overlay.open .lu-modal{transform:scale(1) translateY(0)}
-.lu-modal-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(28,179,255,.9);margin-bottom:7px}
+.lu-modal-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(var(--accent-rgb),.9);margin-bottom:7px}
 .lu-modal-msg{font-size:12px;color:rgba(140,170,200,.6);margin-bottom:14px;line-height:1.65}
-.lu-log{background:rgba(0,0,0,.45);border:1px solid rgba(28,179,255,.1);border-radius:4px;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(28,179,255,.75);height:80px;overflow-y:auto;margin-bottom:14px;display:none;line-height:1.6}
+.lu-log{background:rgba(0,0,0,.45);border:1px solid rgba(var(--accent-rgb),.1);border-radius:4px;padding:8px 10px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(var(--accent-rgb),.75);height:80px;overflow-y:auto;margin-bottom:14px;display:none;line-height:1.6}
 .lu-log.visible{display:block}
 .lu-log::-webkit-scrollbar{width:3px}
-.lu-log::-webkit-scrollbar-thumb{background:rgba(28,179,255,.2)}
+.lu-log::-webkit-scrollbar-thumb{background:rgba(var(--accent-rgb),.2)}
 .lu-progress-wrap{height:2px;background:rgba(255,255,255,.07);border-radius:1px;overflow:hidden;margin:0 0 14px;display:none}
 .lu-progress-wrap.visible{display:block}
-.lu-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,rgba(28,179,255,.9),#7affff);transition:width .3s}
+.lu-progress-bar{height:100%;width:0%;background:linear-gradient(90deg,rgba(var(--accent-rgb),.9),#7affff);transition:width .3s}
 .lu-actions{display:flex;gap:8px}
 .lu-btn{flex:1;height:38px;border-radius:4px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:filter .15s,opacity .15s}
 .lu-btn:hover:not(:disabled){filter:brightness(1.1)}
 .lu-btn:disabled{opacity:.3;cursor:not-allowed}
-.lu-btn.primary{background:linear-gradient(135deg,rgba(28,179,255,.85),rgba(10,143,212,.85));color:#fff}
+.lu-btn.primary{background:linear-gradient(135deg,rgba(var(--accent-rgb),.85),rgba(10,143,212,.85));color:#fff}
 .lu-btn.secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(150,175,210,.6)}
 
 .discord-bar{width:100%;display:flex;align-items:center;justify-content:center;padding:9px 0;background:rgba(5,10,20,.6);border-top:1px solid rgba(255,255,255,.05);backdrop-filter:blur(4px)}
@@ -199,6 +215,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .discord-link:hover{color:#7289da}
 .discord-link:hover .dc-icon{fill:#7289da}
 .dc-icon{width:19px;height:19px;fill:rgba(130,150,200,.6);transition:fill .15s}
+
+/* TOASTS */
+.toast-container{position:fixed;right:14px;bottom:14px;z-index:130;display:flex;flex-direction:column;gap:8px;max-width:260px}
+.toast{background:rgba(6,11,20,.96);border-radius:4px;border-left:3px solid var(--accent);padding:8px 10px 8px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:rgba(210,225,245,.92);box-shadow:0 10px 30px rgba(0,0,0,.45);opacity:0;transform:translateY(8px);animation:toast-in .22s ease-out forwards}
+.toast-success{border-left-color:var(--green)}
+.toast-error{border-left-color:#ff5252}
+.toast-info{border-left-color:var(--accent)}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
 /* SETTINGS PANEL */
 .settings-panel{position:fixed;top:var(--nav-h);right:0;width:300px;height:calc(100vh - var(--nav-h));background:rgba(6,11,20,.97);border-left:1px solid rgba(255,255,255,.07);backdrop-filter:blur(16px);z-index:50;transform:translateX(100%);opacity:0;transition:transform .35s cubic-bezier(.22,1,.36,1),opacity .25s ease;display:flex;flex-direction:column;padding:22px 18px}
@@ -209,8 +233,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .path-display{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:4px;padding:9px 11px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(160,185,215,.5);margin-bottom:8px;min-height:36px;display:flex;align-items:center;word-break:break-all;line-height:1.4;transition:border-color .15s,color .15s}
 .path-display.set{color:rgba(0,230,118,.8);border-color:rgba(0,230,118,.18);cursor:pointer}
 .path-display.set:hover{border-color:rgba(0,230,118,.35)}
-.panel-btn{width:100%;height:36px;background:rgba(28,179,255,.1);border:1px solid rgba(28,179,255,.22);border-radius:4px;color:rgba(28,179,255,.85);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:8px}
-.panel-btn:hover{background:rgba(28,179,255,.18);border-color:rgba(28,179,255,.38)}
+.panel-btn{width:100%;height:36px;background:rgba(var(--accent-rgb),.1);border:1px solid rgba(var(--accent-rgb),.22);border-radius:4px;color:rgba(var(--accent-rgb),.85);font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:background .15s,border-color .15s;margin-bottom:8px}
+.panel-btn:hover{background:rgba(var(--accent-rgb),.18);border-color:rgba(var(--accent-rgb),.38)}
 .panel-btn.danger{background:rgba(255,80,80,.08);border-color:rgba(255,80,80,.2);color:rgba(255,100,100,.75)}
 .panel-btn.danger:hover{background:rgba(255,80,80,.15);border-color:rgba(255,80,80,.35)}
 
@@ -221,8 +245,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .modal-overlay.open .modal{transform:scale(1) translateY(0)}
 .modal-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#fff;margin-bottom:7px}
 .modal-sub{font-size:12px;color:rgba(150,175,205,.6);margin-bottom:18px;line-height:1.65}
-.auto-paste-btn{width:100%;height:44px;background:rgba(28,179,255,.14);border:1px solid rgba(28,179,255,.32);border-radius:5px;color:rgba(28,179,255,.95);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:14px;transition:background .15s,opacity .15s}
-.auto-paste-btn:hover{background:rgba(28,179,255,.22)}
+.auto-paste-btn{width:100%;height:44px;background:rgba(var(--accent-rgb),.14);border:1px solid rgba(var(--accent-rgb),.32);border-radius:5px;color:rgba(var(--accent-rgb),.95);font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:14px;transition:background .15s,opacity .15s}
+.auto-paste-btn:hover{background:rgba(var(--accent-rgb),.22)}
 .auto-paste-btn:disabled{opacity:.3;cursor:not-allowed}
 .manual-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(120,145,175,.4);font-family:'Rajdhani',sans-serif;margin-bottom:7px}
 .cmd-block{background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.06);border-radius:4px;padding:9px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;color:rgba(0,230,118,.8);display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}
@@ -235,12 +259,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .modal-status.err{color:rgba(255,80,80,.9)}
 .progress-wrap{height:2px;background:rgba(255,255,255,.07);border-radius:1px;overflow:hidden;margin-bottom:16px;display:none}
 .progress-wrap.visible{display:block}
-.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),#7affff);transition:width .35s}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#7affff);transition:width .35s}
 .modal-actions{display:flex;gap:8px}
 .modal-btn{flex:1;height:38px;border-radius:4px;border:none;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;transition:filter .15s,opacity .15s}
 .modal-btn:hover:not(:disabled){filter:brightness(1.1)}
 .modal-btn:disabled{opacity:.3;cursor:not-allowed}
-.modal-btn.primary{background:linear-gradient(135deg,var(--blue),var(--blue-dim));color:#fff}
+.modal-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-dim));color:#fff}
 .modal-btn.secondary{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);color:rgba(170,190,215,.6)}
 
 /* UPDATE MODAL */
@@ -364,16 +388,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
         </div>
         <div class="sb-table-wrap">
           <div class="sb-table-header">
+            <span class="sb-col sb-col-fav"></span>
             <span class="sb-col sb-col-status"></span>
-            <span class="sb-col sb-col-name">Server</span>
-            <span class="sb-col sb-col-map">Map</span>
-            <span class="sb-col sb-col-players">Players</span>
-            <span class="sb-col sb-col-ping">Ping</span>
+            <span class="sb-col sb-col-name sortable" data-sort="name">Server<span class="sb-sort-arrow" id="sortArrowName"></span></span>
+            <span class="sb-col sb-col-map sortable" data-sort="map">Map<span class="sb-sort-arrow" id="sortArrowMap"></span></span>
+            <span class="sb-col sb-col-players sortable" data-sort="players">Players<span class="sb-sort-arrow" id="sortArrowPlayers"></span></span>
+            <span class="sb-col sb-col-ping sortable" data-sort="ping">Ping<span class="sb-sort-arrow" id="sortArrowPing"></span></span>
             <span class="sb-col sb-col-connect"></span>
           </div>
           <div class="sb-table-body" id="sbBody">
             <div class="sb-empty">No servers configured</div>
           </div>
+        </div>
+        <div class="sb-direct-connect">
+          <input type="text" id="sbDirectIp" class="sb-direct-input" placeholder="Direct connect ip:port"/>
+          <button id="sbDirectBtn" class="sb-connect-btn" disabled>Connect</button>
         </div>
       </div>
 
@@ -396,6 +425,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
   </div>
 </div>
 
+<div class="toast-container" id="toastContainer"></div>
+
 <!-- Settings Panel -->
 <div class="settings-panel" id="settingsPanel">
   <div class="settings-title">Settings</div>
@@ -415,6 +446,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
     <div class="setting-label">Server Browser</div>
     <button class="panel-btn" id="toggleServerBrowserBtn">Hide Server Browser</button>
   </div>
+<div class="setting-group">
+  <div class="setting-label">Theme</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="ac-btn" style="width:26px;height:26px;border-radius:50%;background:#1cb3ff;border-color:rgba(255,255,255,.12)" data-theme="blue"  title="Blue"></button>
+    <button class="ac-btn" style="width:26px;height:26px;border-radius:50%;background:#ff4060;border-color:rgba(255,255,255,.12)" data-theme="red"   title="Red"></button>
+    <button class="ac-btn" style="width:26px;height:26px;border-radius:50%;background:#00e676;border-color:rgba(255,255,255,.12)" data-theme="green" title="Green"></button>
+    <button class="ac-btn" style="width:26px;height:26px;border-radius:50%;background:#b44dff;border-color:rgba(255,255,255,.12)" data-theme="purple" title="Purple"></button>
+    <button class="ac-btn" style="width:26px;height:26px;border-radius:50%;background:#ff8c00;border-color:rgba(255,255,255,.12)" data-theme="orange" title="Orange"></button>
+    <button class="ac-btn" style="width:26px;height:26px;border-radius:50%;background:#ff6eb4;border-color:rgba(255,255,255,.12)" data-theme="pink" title="Pink"></button>
+  </div>
+</div>
+<div class="setting-group">
+  <div class="setting-label">Background</div>
+  <button class="panel-btn" id="bgShuffleBtn">Shuffle Background</button>
+  <select id="bgSelect" class="sb-direct-input" style="width:100%;margin-top:6px">
+    <option value="shuffle">Shuffle (default)</option>
+  </select>
+</div>
 </div>
 
 <!-- Steam Modal -->
@@ -429,6 +478,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
     </button>
 
     <div class="manual-label">Or copy manually:</div>
+    <div class="cmd-block">
+      <span>Both commands (paste into Steam console)</span>
+      <button class="copy-btn" id="copyBothBtn">Copy Both</button>
+    </div>
     <div class="cmd-block">
       <span>download_depot 252490 252494 5740964467494905272</span>
       <button class="copy-btn" data-text="download_depot 252490 252494 5740964467494905272">Copy</button>
@@ -482,8 +535,72 @@ let audioFileList = [], audioIdx = 0;
 
 const $ = id => document.getElementById(id);
 
+// ═══ THEME & BACKGROUND PREFS ═══
+const THEME_KEY = 'themePreset';
+const BG_KEY = 'bgChoice';
+const THEMES = {
+  blue:   { accent:'#1cb3ff', dim:'#0a8fd4', rgb:'28,179,255' },
+  red:    { accent:'#ff4060', dim:'#c82440', rgb:'255,64,96' },
+  green:  { accent:'#00e676', dim:'#00b85d', rgb:'0,230,118' },
+  purple: { accent:'#b44dff', dim:'#7b2bd4', rgb:'180,77,255' },
+  orange: { accent:'#ff8c00', dim:'#d06b00', rgb:'255,140,0' },
+  pink:   { accent:'#ff6eb4', dim:'#d6458d', rgb:'255,110,180' },
+};
+
+function applyThemePreset(name) {
+  const t = THEMES[name] || THEMES.blue;
+  const root = document.documentElement;
+  root.style.setProperty('--accent', t.accent);
+  root.style.setProperty('--accent-dim', t.dim);
+  root.style.setProperty('--accent-rgb', t.rgb);
+  try { localStorage.setItem(THEME_KEY, name); } catch {}
+}
+
+let bgMode = 'shuffle'; // 'shuffle' | url
+function applyBackgroundChoice(choice) {
+  bgMode = choice || 'shuffle';
+  try { localStorage.setItem(BG_KEY, bgMode); } catch {}
+  if (bgMode === 'shuffle') {
+    showMedia(mediaIdx);
+    return;
+  }
+  const bgVideo = $('bgVideo'), bgImg = $('bgImg');
+  clearTimeout(mediaTimer);
+  const isVideo = /\.(mp4|mkv|webm|mov)$/i.test(bgMode);
+  if (isVideo) {
+    bgImg.style.display = 'none';
+    bgVideo.style.display = 'block';
+    bgVideo.src = bgMode; bgVideo.load(); bgVideo.play().catch(()=>{});
+  } else {
+    bgVideo.pause(); bgVideo.style.display = 'none';
+    bgImg.style.display = 'block'; bgImg.src = bgMode;
+  }
+}
+
+// ═══ TOASTS ═══
+function showToast(message, type='info', duration=3000) {
+  const container = $('toastContainer');
+  if (!container) return;
+  const div = document.createElement('div');
+  div.className = 'toast toast-' + (type === 'success' ? 'success' : type === 'error' ? 'error' : 'info');
+  div.textContent = message;
+  container.appendChild(div);
+  const timer = setTimeout(() => {
+    div.style.opacity = '0';
+    div.style.transform = 'translateY(8px)';
+    setTimeout(() => { if (div.parentNode) div.parentNode.removeChild(div); }, 180);
+  }, duration);
+  div.addEventListener('click', () => {
+    clearTimeout(timer);
+    if (div.parentNode) div.parentNode.removeChild(div);
+  });
+}
+
 // ═══ INIT ═══
 async function init() {
+  // Apply saved theme early
+  try { applyThemePreset(localStorage.getItem(THEME_KEY) || 'blue'); } catch {}
+
   config = await window.api.getConfig();
   applyConfig(config);
 
@@ -495,7 +612,27 @@ async function init() {
     ...files.videos.map(u => ({ url:u, type:'video' })),
     ...files.images.map(u => ({ url:u, type:'image' })),
   ];
-  if (mediaAll.length) { mediaAll.sort(() => Math.random()-.5); showMedia(0); }
+  if (mediaAll.length) {
+    mediaAll.sort(() => Math.random()-.5);
+    // Populate background dropdown
+    const sel = $('bgSelect');
+    if (sel) {
+      const opts = ['shuffle', ...mediaAll.map(m => m.url)];
+      // Keep existing first option, add the rest
+      for (const url of opts) {
+        if (url === 'shuffle') continue;
+        const o = document.createElement('option');
+        o.value = url;
+        o.textContent = decodeURIComponent(url.split('/').pop());
+        sel.appendChild(o);
+      }
+    }
+    // Apply saved background choice
+    let saved = 'shuffle';
+    try { saved = localStorage.getItem(BG_KEY) || 'shuffle'; } catch {}
+    if ($('bgSelect')) $('bgSelect').value = saved;
+    applyBackgroundChoice(saved);
+  }
 
   // Audio: if user put files in audio/ folder, play them
   audioFileList = await window.api.getAudioFiles();
@@ -563,6 +700,21 @@ async function init() {
   });
 
   window.api.onConfig(cfg => { config = cfg; applyConfig(cfg); });
+
+  window.api.onGameExited(({ code }) => {
+    // Launcher is restored from tray when game exits
+    if (code !== 0) {
+      $('sbStatus').textContent = `Game exited (code ${code})`;
+      showToast(`Game exited (code ${code})`, 'info');
+    } else {
+      $('sbStatus').textContent = 'Game closed';
+      setTimeout(() => {
+        const online = serverData.filter(s => s.online).length;
+        $('sbStatus').textContent = serverData.length ? `${online}/${serverData.length} online` : '';
+      }, 4000);
+      showToast('Game closed', 'info');
+    }
+  });
 
   // Start server browser
   refreshServers();
@@ -637,6 +789,7 @@ function setInstalled(path) {
   $('reVerifyBtn').style.display             = 'block';
   $('openFolderBtn').style.display           = 'block';
   $('shortcutBtn').style.display             = 'block';
+  if ($('sbDirectIp').value.trim()) $('sbDirectBtn').disabled = false;
 }
 
 // ═══ WINDOW ═══
@@ -646,6 +799,7 @@ $('btnClose').addEventListener('click', () => window.api.close());
 // ═══ MEDIA ═══
 function showMedia(idx) {
   if (!mediaAll.length) return;
+  if (bgMode !== 'shuffle') return;
   const item = mediaAll[idx % mediaAll.length];
   clearTimeout(mediaTimer);
   const bgVideo = $('bgVideo'), bgImg = $('bgImg');
@@ -704,9 +858,7 @@ $('browseBtn').addEventListener('click', async () => {
 $('pathDisplay').addEventListener('click', () => {
   if (!installPath) return;
   navigator.clipboard.writeText(installPath).then(() => {
-    const orig = $('pathDisplay').textContent;
-    $('pathDisplay').textContent = '✓ Copied!';
-    setTimeout(() => { $('pathDisplay').textContent = orig; }, 1500);
+    showToast('Install path copied', 'info');
   });
 });
 $('openFolderBtn').addEventListener('click', () => { if (installPath) window.api.openFolder(installPath); });
@@ -715,8 +867,9 @@ $('checkUpdateBtn').addEventListener('click', async () => {
   $('checkUpdateBtn').disabled = true;
   const found = await window.api.checkUpdate();
   if (!found) {
-    $('checkUpdateBtn').textContent = 'Up to date';
-    setTimeout(() => { $('checkUpdateBtn').textContent = 'Check for Updates'; $('checkUpdateBtn').disabled = false; }, 3000);
+    showToast('Launcher is up to date', 'success');
+    $('checkUpdateBtn').textContent = 'Check for Updates';
+    $('checkUpdateBtn').disabled = false;
   }
 });
 $('reVerifyBtn').addEventListener('click', () => {
@@ -818,11 +971,18 @@ const pasteIcon = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" s
 
 document.querySelectorAll('.copy-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(btn.dataset.text).then(() => {
-      btn.textContent='Copied!'; btn.classList.add('ok');
-      setTimeout(() => { btn.textContent='Copy'; btn.classList.remove('ok'); }, 2000);
-    });
+    const text = btn.dataset.text;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => showToast('Command copied', 'info'));
   });
+});
+
+$('copyBothBtn').addEventListener('click', () => {
+  const all = [
+    'download_depot 252490 252494 5740964467494905272',
+    'download_depot 252490 252495 2089044749149059032',
+  ].join('\\n');
+  navigator.clipboard.writeText(all).then(() => showToast('Both commands copied', 'info'));
 });
 
 $('autoPasteBtn').addEventListener('click', async () => {
@@ -1014,11 +1174,13 @@ $('shortcutBtn').addEventListener('click', async () => {
   $('shortcutBtn').disabled = true;
   const r = await window.api.createShortcut(installPath);
   if (r.success) {
-    $('shortcutBtn').textContent = '✓ Shortcut Created';
-    setTimeout(() => { $('shortcutBtn').textContent = 'Create Desktop Shortcut'; $('shortcutBtn').disabled = false; }, 2500);
-  } else {
-    $('shortcutBtn').textContent = 'Failed — try again';
+    $('shortcutBtn').textContent = 'Create Desktop Shortcut';
     $('shortcutBtn').disabled = false;
+    showToast('Desktop shortcut created', 'success');
+  } else {
+    $('shortcutBtn').textContent = 'Create Desktop Shortcut';
+    $('shortcutBtn').disabled = false;
+    showToast('Failed to create shortcut', 'error');
   }
 });
 
@@ -1026,8 +1188,44 @@ $('shortcutBtn').addEventListener('click', async () => {
 let serverData = [];
 let serverRefreshTimer = null;
 let serverQueryInProgress = false;
+const FAV_KEY = 'serverFavorites';
+let favorites = new Set();
+let sortCol = 'name';
+let sortDir = 'asc'; // 'asc' | 'desc'
 
 function escHtml(str) { const d = document.createElement('div'); d.textContent = str; return d.innerHTML; }
+
+function serverKey(ip, port) { return `${ip}:${port || 28015}`; }
+function loadFavorites() {
+  try {
+    const raw = localStorage.getItem(FAV_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    favorites = new Set(Array.isArray(arr) ? arr : []);
+  } catch { favorites = new Set(); }
+}
+function saveFavorites() { try { localStorage.setItem(FAV_KEY, JSON.stringify([...favorites])); } catch {} }
+
+function setSort(col) {
+  if (sortCol === col) sortDir = (sortDir === 'asc' ? 'desc' : 'asc');
+  else { sortCol = col; sortDir = 'asc'; }
+  renderServerList();
+}
+
+function sortValue(srv) {
+  if (sortCol === 'ping') return srv.online ? (srv.ping ?? 999999) : 999999;
+  if (sortCol === 'players') return srv.online ? (srv.players ?? -1) : -1;
+  if (sortCol === 'map') return (srv.online ? (srv.map || '') : '');
+  return (srv.displayName || `${srv.ip}:${srv.port}`).toLowerCase();
+}
+
+function updateSortArrows() {
+  const ids = ['Name','Map','Players','Ping'];
+  ids.forEach(id => { const el = document.getElementById('sortArrow'+id); if (el) el.textContent = ''; });
+  const arrow = sortDir === 'asc' ? '▲' : '▼';
+  const map = { name:'Name', map:'Map', players:'Players', ping:'Ping' };
+  const el = document.getElementById('sortArrow' + (map[sortCol] || 'Name'));
+  if (el) el.textContent = arrow;
+}
 
 async function refreshServers() {
   if (serverQueryInProgress) return;
@@ -1050,7 +1248,23 @@ async function refreshServers() {
 function renderServerList() {
   const body = $('sbBody');
   if (!serverData.length) { body.innerHTML = '<div class="sb-empty">No servers configured in config.json</div>'; return; }
-  body.innerHTML = serverData.map(srv => {
+  updateSortArrows();
+
+  const rows = [...serverData];
+  rows.sort((a, b) => {
+    const ak = serverKey(a.ip, a.port);
+    const bk = serverKey(b.ip, b.port);
+    const af = favorites.has(ak) ? 1 : 0;
+    const bf = favorites.has(bk) ? 1 : 0;
+    if (af !== bf) return bf - af;
+    const av = sortValue(a);
+    const bv = sortValue(b);
+    if (av < bv) return sortDir === 'asc' ? -1 : 1;
+    if (av > bv) return sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  body.innerHTML = rows.map(srv => {
     const dot = srv.online ? 'online' : 'offline';
     const name = srv.displayName || `${srv.ip}:${srv.port}`;
     const map = srv.online ? (srv.map || '\u2014') : '\u2014';
@@ -1058,17 +1272,76 @@ function renderServerList() {
     const pingVal = srv.online ? srv.ping : '\u2014';
     const pingColor = srv.online ? (srv.ping < 50 ? 'rgba(0,230,118,.8)' : srv.ping < 100 ? 'rgba(255,200,0,.8)' : 'rgba(255,80,80,.8)') : 'rgba(150,175,210,.35)';
     const dis = (!srv.online || !gameInstalled) ? 'disabled' : '';
-    return `<div class="sb-row"><span class="sb-col sb-col-status"><span class="sb-dot ${dot}"></span></span><span class="sb-col sb-col-name" title="${escHtml(name)}">${escHtml(name)}</span><span class="sb-col sb-col-map" title="${escHtml(map)}">${escHtml(map)}</span><span class="sb-col sb-col-players">${players}</span><span class="sb-col sb-col-ping" style="color:${pingColor}">${pingVal}${srv.online ? 'ms' : ''}</span><span class="sb-col sb-col-connect"><button class="sb-connect-btn" ${dis} onclick="connectToServer('${srv.ip}',${srv.port})">Connect</button></span></div>`;
+    const key = serverKey(srv.ip, srv.port);
+    const fav = favorites.has(key);
+    const favClass = fav ? 'favorited' : '';
+    const favBtnClass = fav ? 'sb-fav-btn fav' : 'sb-fav-btn';
+    const starSvg = `<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6.1 6.7.9-4.9 4.7 1.2 6.7L12 17.9 6.1 20.9l1.2-6.7-4.9-4.7 6.7-.9L12 2.5z"/></svg>`;
+    return `<div class="sb-row ${favClass}"><span class="sb-col sb-col-fav"><button class="${favBtnClass}" title="${fav ? 'Unfavorite' : 'Favorite'}" onclick="toggleFavorite('${key}')">${starSvg}</button></span><span class="sb-col sb-col-status"><span class="sb-dot ${dot}"></span></span><span class="sb-col sb-col-name" title="${escHtml(name)}">${escHtml(name)}</span><span class="sb-col sb-col-map" title="${escHtml(map)}">${escHtml(map)}</span><span class="sb-col sb-col-players">${players}</span><span class="sb-col sb-col-ping" style="color:${pingColor}">${pingVal}${srv.online ? 'ms' : ''}</span><span class="sb-col sb-col-connect"><button class="sb-connect-btn" ${dis} onclick="connectToServer('${srv.ip}',${srv.port})">Connect</button></span></div>`;
   }).join('');
 }
+
+window.toggleFavorite = function(key) {
+  if (favorites.has(key)) favorites.delete(key);
+  else favorites.add(key);
+  saveFavorites();
+  renderServerList();
+};
 
 async function connectToServer(ip, port) {
   if (!gameInstalled) return;
   const r = await window.api.connectServer({ ip, port });
-  if (!r.success) $('sbStatus').textContent = r.error || 'Connect failed';
+  if (!r.success) {
+    const msg = r.error || 'Connect failed';
+    $('sbStatus').textContent = msg;
+    showToast(msg, 'error');
+  }
 }
 
 $('sbRefresh').addEventListener('click', refreshServers);
+
+// Sorting (click headers)
+document.querySelectorAll('.sb-col.sortable').forEach(el => {
+  el.addEventListener('click', () => setSort(el.dataset.sort));
+});
+
+// Favorites
+loadFavorites();
+
+// Theme preset buttons
+document.querySelectorAll('[data-theme]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    applyThemePreset(btn.dataset.theme);
+    showToast(`Theme: ${btn.dataset.theme}`, 'info');
+  });
+});
+
+// Background controls
+$('bgShuffleBtn').addEventListener('click', () => {
+  if ($('bgSelect')) $('bgSelect').value = 'shuffle';
+  applyBackgroundChoice('shuffle');
+  showToast('Background: shuffle', 'info');
+});
+$('bgSelect').addEventListener('change', () => {
+  applyBackgroundChoice($('bgSelect').value);
+  showToast('Background updated', 'info');
+});
+
+// ═══ DIRECT CONNECT ═══
+$('sbDirectIp').addEventListener('input', () => {
+  $('sbDirectBtn').disabled = !$('sbDirectIp').value.trim() || !gameInstalled;
+});
+$('sbDirectIp').addEventListener('keydown', e => { if (e.key === 'Enter') directConnect(); });
+$('sbDirectBtn').addEventListener('click', directConnect);
+function directConnect() {
+  const val = $('sbDirectIp').value.trim();
+  if (!val || !gameInstalled) return;
+  const lastColon = val.lastIndexOf(':');
+  const hasPort   = lastColon > 0 && lastColon < val.length - 1;
+  const ip   = hasPort ? val.slice(0, lastColon) : val;
+  const port = hasPort ? (parseInt(val.slice(lastColon + 1), 10) || 28015) : 28015;
+  connectToServer(ip, port);
+}
 
 // ═══ SERVER BROWSER TOGGLE ═══
 (function() {

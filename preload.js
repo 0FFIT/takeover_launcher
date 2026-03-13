@@ -3,6 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('api', {
   minimize: ()    => ipcRenderer.send('window-minimize'),
   close:    ()    => ipcRenderer.send('window-close'),
+  quit:     ()    => ipcRenderer.send('window-quit'),
 
   getConfig:             () => ipcRenderer.invoke('get-config'),
   getMediaFiles:         () => ipcRenderer.invoke('get-media-files'),
@@ -27,6 +28,7 @@ contextBridge.exposeInMainWorld('api', {
   getAudioFiles:         ()  => ipcRenderer.invoke('get-audio-files'),
   queryServers:          ()  => ipcRenderer.invoke('query-servers'),
   connectServer:         (d) => ipcRenderer.invoke('connect-server', d),
+  queryServerIp:         (d) => ipcRenderer.invoke('query-server-ip', d),
 
   onConfig:                    (cb) => ipcRenderer.on('config',                    (_e,d) => cb(d)),
   onAlreadyInstalled:          (cb) => ipcRenderer.on('already-installed',          (_e,d) => cb(d)),
@@ -38,4 +40,5 @@ contextBridge.exposeInMainWorld('api', {
   onLauncherUpdateAvailable:   (cb) => ipcRenderer.on('launcher-update-available',  (_e,d) => cb(d)),
   onLauncherUpdateProgress:    (cb) => ipcRenderer.on('launcher-update-progress',   (_e,d) => cb(d)),
   onDepotDownloadProgress:     (cb) => ipcRenderer.on('depot-download-progress',    (_e,d) => cb(d)),
+  onGameExited:                (cb) => ipcRenderer.on('game-exited',                (_e,d) => cb(d)),
 });
