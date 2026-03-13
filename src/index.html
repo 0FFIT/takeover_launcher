@@ -163,6 +163,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
 .sb-connect-btn:disabled{opacity:.3;cursor:not-allowed}
 .sb-empty{padding:40px 20px;text-align:center;font-family:'Rajdhani',sans-serif;font-size:13px;color:rgba(140,165,195,.35);letter-spacing:.06em}
 
+/* DIRECT CONNECT */
+.sb-direct-connect{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.01)}
+.sb-direct-input{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:3px;padding:5px 10px;color:rgba(200,215,235,.7);font-family:'Share Tech Mono',monospace;font-size:11px;outline:none;min-width:0;-webkit-user-select:text;user-select:text}
+.sb-direct-input:focus{border-color:rgba(28,179,255,.25);background:rgba(28,179,255,.03)}
+.sb-direct-input::placeholder{color:rgba(140,165,195,.28)}
+
 /* LAUNCHER UPDATE BANNER */
 .launcher-update-banner{background:rgba(28,179,255,.08);border-bottom:1px solid rgba(28,179,255,.2);padding:7px 20px;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:.06em;color:rgba(28,179,255,.9);display:none;align-items:center;gap:12px}
 .launcher-update-banner.visible{display:flex}
@@ -375,6 +381,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#060b12;font-family:
             <div class="sb-empty">No servers configured</div>
           </div>
         </div>
+        <div class="sb-direct-connect">
+          <input type="text" id="sbDirectIp" class="sb-direct-input" placeholder="Direct connect ip:port"/>
+          <button id="sbDirectBtn" class="sb-connect-btn" disabled>Connect</button>
+        </div>
       </div>
 
       <!-- Main button row -->
@@ -564,6 +574,19 @@ async function init() {
 
   window.api.onConfig(cfg => { config = cfg; applyConfig(cfg); });
 
+  window.api.onGameExited(({ code }) => {
+    // Launcher is restored from tray when game exits
+    if (code !== 0) {
+      $('sbStatus').textContent = `Game exited (code ${code})`;
+    } else {
+      $('sbStatus').textContent = 'Game closed';
+      setTimeout(() => {
+        const online = serverData.filter(s => s.online).length;
+        $('sbStatus').textContent = serverData.length ? `${online}/${serverData.length} online` : '';
+      }, 4000);
+    }
+  });
+
   // Start server browser
   refreshServers();
 }
@@ -637,6 +660,7 @@ function setInstalled(path) {
   $('reVerifyBtn').style.display             = 'block';
   $('openFolderBtn').style.display           = 'block';
   $('shortcutBtn').style.display             = 'block';
+  if ($('sbDirectIp').value.trim()) $('sbDirectBtn').disabled = false;
 }
 
 // ═══ WINDOW ═══
@@ -1069,6 +1093,22 @@ async function connectToServer(ip, port) {
 }
 
 $('sbRefresh').addEventListener('click', refreshServers);
+
+// ═══ DIRECT CONNECT ═══
+$('sbDirectIp').addEventListener('input', () => {
+  $('sbDirectBtn').disabled = !$('sbDirectIp').value.trim() || !gameInstalled;
+});
+$('sbDirectIp').addEventListener('keydown', e => { if (e.key === 'Enter') directConnect(); });
+$('sbDirectBtn').addEventListener('click', directConnect);
+function directConnect() {
+  const val = $('sbDirectIp').value.trim();
+  if (!val || !gameInstalled) return;
+  const lastColon = val.lastIndexOf(':');
+  const hasPort   = lastColon > 0 && lastColon < val.length - 1;
+  const ip   = hasPort ? val.slice(0, lastColon) : val;
+  const port = hasPort ? (parseInt(val.slice(lastColon + 1), 10) || 28015) : 28015;
+  connectToServer(ip, port);
+}
 
 // ═══ SERVER BROWSER TOGGLE ═══
 (function() {

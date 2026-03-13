@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell, dialog, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, screen, Tray, Menu, nativeImage } = require('electron');
 const path     = require('path');
 const fs       = require('fs');
 const crypto   = require('crypto');
@@ -9,6 +9,8 @@ const { pathToFileURL } = require('url');
 const dgram    = require('dgram');
 
 let win;
+let tray = null;
+app.isQuitting = false;
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 const isPortable   = app.isPackaged;
@@ -94,11 +96,18 @@ function createWindow() {
     writeState({ ...readState(), window_bounds: { x, y } });
   };
   win.on('moved', savePos);
-  win.on('close', savePos);
+  win.on('close', (e) => {
+    savePos();
+    if (!app.isQuitting) {
+      e.preventDefault();
+      win.hide();
+    }
+  });
 
   win.loadFile(path.join(__dirname, 'src', 'index.html'));
   win.once('ready-to-show', () => {
     win.show();
+    setupTray();
     const cfg   = readConfig();
     const state = readState();
     win.webContents.send('config', cfg);
@@ -115,14 +124,43 @@ function createWindow() {
 // ─── Single instance lock ─────────────────────────────────────────────────────
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) { app.quit(); } else {
-  app.on('second-instance', () => { if (win) { if (win.isMinimized()) win.restore(); win.focus(); } });
+  app.on('second-instance', () => { if (win) { win.show(); if (win.isMinimized()) win.restore(); win.focus(); } });
   app.whenReady().then(() => { createWindow(); });
 }
 app.on('window-all-closed', () => app.quit());
+app.on('will-quit', () => { app.isQuitting = true; if (tray) { tray.destroy(); tray = null; } });
 
 // ─── Window controls ──────────────────────────────────────────────────────────
 ipcMain.on('window-minimize', () => win.minimize());
-ipcMain.on('window-close',    () => win.close());
+ipcMain.on('window-close',    () => win.hide());    // minimize to tray
+ipcMain.on('window-quit',     () => { app.isQuitting = true; app.quit(); });
+
+// ─── System tray ─────────────────────────────────────────────────────────────
+function setupTray() {
+  if (tray) return;
+  try {
+    const ico  = icoPath();
+    const icon = ico ? nativeImage.createFromPath(ico) : nativeImage.createEmpty();
+    tray = new Tray(icon);
+    tray.setToolTip(readConfig().window_title || 'TAKEOVER');
+    const menu = Menu.buildFromTemplate([
+      { label: 'Open Launcher', click: () => { win.show(); win.focus(); } },
+      { type: 'separator' },
+      { label: 'Quit',          click: () => { app.isQuitting = true; app.quit(); } },
+    ]);
+    tray.setContextMenu(menu);
+    tray.on('double-click', () => { win.show(); win.focus(); });
+  } catch {}
+}
+
+// ─── Restore launcher when game process exits ─────────────────────────────────
+function onGameExit(code) {
+  if (!app.isQuitting && win && !win.isDestroyed()) {
+    win.show();
+    win.focus();
+    win.webContents.send('game-exited', { code: code ?? 0 });
+  }
+}
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 ipcMain.handle('get-config', () => readConfig());
@@ -536,9 +574,11 @@ ipcMain.handle('launch-game', async (event, installPath) => {
       stdio: 'ignore',
       cwd: installPath,
     });
+    // Watch for game exit so we can restore the launcher
+    child.on('exit', onGameExit);
     child.unref();
-    // Close launcher after short delay
-    setTimeout(() => app.quit(), 1500);
+    // Minimize launcher to tray while the game is running
+    setTimeout(() => win.hide(), 1500);
     return { success: true };
   } catch(e) {
     return { success: false, error: e.message };
@@ -969,6 +1009,10 @@ ipcMain.handle('query-servers', async () => {
   }));
 });
 
+ipcMain.handle('query-server-ip', async (event, { ip, port }) => {
+  return queryServer(ip, port || 28015, 3000);
+});
+
 ipcMain.handle('connect-server', async (event, { ip, port }) => {
   const state = readState();
   if (!state.install_path) return { success: false, error: 'Game not installed' };
@@ -978,8 +1022,9 @@ ipcMain.handle('connect-server', async (event, { ip, port }) => {
     const child = spawn(rustExe, ['+connect', `${ip}:${port}`], {
       detached: true, stdio: 'ignore', cwd: state.install_path,
     });
+    child.on('exit', onGameExit);
     child.unref();
-    setTimeout(() => app.quit(), 1500);
+    setTimeout(() => win.hide(), 1500);
     return { success: true };
   } catch(e) { return { success: false, error: e.message }; }
 });
