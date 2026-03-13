@@ -2,6 +2,7 @@
   "name": "takeover-launcher",
   "version": "2.0.6",
   "description": "takeover Launcher",
+  "author": "0FFIT",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
