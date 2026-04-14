@@ -17,4 +17,3 @@ This package is the Steam-only open-source launcher build.
 3. Build exe:
    - Run `build.bat`
    - Output: `dist/takeover_launcher.exe`
-=======
