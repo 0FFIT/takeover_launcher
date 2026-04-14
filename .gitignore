@@ -1,0 +1,16 @@
+node_modules/
+dist/
+launcher_state.json
+file_hashes.json
+python-embed/
+*.log
+.env
+.env.*
+.DS_Store
+Thumbs.db
+assets/videos/README_VIDEOS.txt
+assets/images/README_IMAGES.txt
+scripts/tko_key.js
+pending-update.exe
+takeover.exe.backup
+security/manifest-private-key.pem

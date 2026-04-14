@@ -1,0 +1,27 @@
+{
+  "discord_url": "",
+  "minimum_launcher_version": null,
+  "announcements": [
+    {
+      "id": "open-source-build",
+      "title": "Open-Source Build",
+      "body": "This shared build ships with Steam install flow enabled by default.",
+      "level": "info",
+      "date": "2026-04-14"
+    }
+  ],
+  "music": {
+    "enabled": true
+  },
+  "videos": {
+    "enabled": true
+  },
+  "servers": [
+    {
+      "id": "local-placeholder",
+      "name": "Local Placeholder",
+      "ip": "127.0.0.1",
+      "port": 28015
+    }
+  ]
+}

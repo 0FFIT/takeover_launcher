@@ -1,0 +1,54 @@
+{
+    "name":  "takeover-launcher",
+    "version": "3.0.0",
+    "description":  "takeover Launcher",
+    "author":  "takeover",
+    "main":  "main.js",
+    "scripts":  {
+                    "start":  "electron .",
+                    "build":  "electron-builder --win --x64"
+                },
+    "build":  {
+                  "appId":  "com.takeover.launcher",
+                  "productName":  "takeover",
+                  "executableName":  "takeover_launcher",
+                  "compression":  "maximum",
+                  "asar":  true,
+                  "artifactName":  "takeover_launcher.exe",
+                  "directories":  {
+                                      "output":  "dist"
+                                  },
+                  "win":  {
+                              "target":  [
+                                             {
+                                                 "target":  "portable",
+                                                 "arch":  [
+                                                              "x64"
+                                                          ]
+                                             }
+                                         ],
+                              "icon":  "build/icon.ico",
+                              "executableName":  "takeover_launcher"
+                          },
+                  "files":  [
+                                "main.js",
+                                "manifest-security.js",
+                                "preload.js",
+                                "security/manifest-public-key.pem",
+                                "src/**/*"
+                            ],
+                  "extraResources":  [
+                                         {
+                                             "from":  "build/icon.ico",
+                                             "to":  "icon.ico"
+                                         }
+                                     ]
+              },
+    "dependencies":  {
+                     },
+    "devDependencies":  {
+                            "electron":  "^40.6.1",
+                            "electron-builder":  "^26.8.1",
+                            "rcedit":  "^4.0.0"
+                        }
+}

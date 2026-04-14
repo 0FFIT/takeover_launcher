@@ -1,0 +1,20 @@
+{
+  "version": "3.0.0",
+  "discord_url": "",
+  "window_title": "TAKEOVER",
+  "launcher_version": "3.0.0",
+  "launcher_exe_url": "",
+  "update_base_url": "",
+  "updates_json_url": "",
+  "launcher_feed_url": "",
+  "music_base_url": "",
+  "videos_base_url": "",
+  "servers": [
+    {
+      "id": "local-placeholder",
+      "name": "Local Placeholder",
+      "ip": "127.0.0.1",
+      "port": 28015
+    }
+  ]
+}
