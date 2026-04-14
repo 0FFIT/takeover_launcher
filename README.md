@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Takeover Launcher (Open Source)
 
 This package is the Steam-only open-source launcher build.
@@ -35,3 +36,6 @@ The launcher reads:
 - private key files are excluded by `.gitignore`
 - no Bunny upload script is included
 - no Auto-Paste script is included
+=======
+# takeover_launcher
+>>>>>>> origin/main
